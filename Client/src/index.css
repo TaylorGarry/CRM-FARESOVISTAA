@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f7f9fc;
+  color: #172b4d;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Shared visual tokens matching the light CRM reference. Existing screens use
+   utility classes, so these overrides keep the theme consistent app-wide. */
+[class*="bg-[#0b0f14]"],
+[class*="bg-[#0d131a]"],
+[class*="bg-[#121820]"],
+[class*="bg-[#18212b]"],
+.bg-slate-900 {
+  background-color: #ffffff !important;
+}
+
+[class*="f4f0e7"],
+[class*="e6cc93"] {
+  color: #172b4d !important;
+}
+
+[class*="8c96a2"],
+[class*="66717d"],
+[class*="65707b"] {
+  color: #6b7c93 !important;
+}
+
+[class*="border-white/10"],
+[class*="border-[rgba(231,226,211,0.15)]"] {
+  border-color: #e2e8f0 !important;
+}
+
+[class*="bg-[#d6b36a]"] {
+  background-color: #0b72e7 !important;
+}
+
+[class*="bg-[#d6b36a]/15"] {
+  background-color: rgb(11 114 231 / 0.08) !important;
+}
+
+[class*="hover:bg-[#e6cc93]"]:hover {
+  background-color: #075fca !important;
+}
+
+[class*="text-[#d6b36a]"],
+[class*="text-[#e6cc93]"] {
+  color: #0b72e7 !important;
+}
+
+.login-submit-button {
+  color: #ffffff !important;
+}
+
+[class*="border-[#d6b36a]"] {
+  border-color: #0b72e7 !important;
+}
+
+[class*="ring-[#d6b36a]"] {
+  --tw-ring-color: rgb(11 114 231 / 0.2) !important;
+}
+
+input, select, textarea {
+  border-color: #d8e0eb;
+  background: #ffffff;
+  color: #172b4d;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #8a9ab0;
+}
+
+button, a {
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.flight-grid {
+  opacity: 0.75;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+.flight-grid::before {
+  content: "";
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 25% 45%, rgb(214 179 106 / 0.1), transparent 30%),
+    linear-gradient(120deg, transparent 54%, rgb(255 255 255 / 0.025));
+  position: absolute;
+  inset: 0;
+}
+
+.flight-grid__latitude,
+.flight-grid__longitude {
+  border: 1px solid rgb(214 179 106 / 0.1);
+  border-radius: 50%;
+  position: absolute;
+  transform: rotate(-20deg);
+}
+
+.flight-grid__latitude {
+  height: 28%;
+  left: -20%;
+  width: 105%;
+}
+
+.flight-grid__latitude--one {
+  top: 27%;
+}
+
+.flight-grid__latitude--two {
+  height: 37%;
+  top: 44%;
+}
+
+.flight-grid__longitude {
+  height: 125%;
+  top: -15%;
+  width: 48%;
+}
+
+.flight-grid__longitude--one {
+  left: 16%;
+}
+
+.flight-grid__longitude--two {
+  left: 42%;
+}
+
+.flight-grid__route {
+  background: linear-gradient(90deg, transparent, rgb(214 179 106 / 0.55), transparent);
+  height: 1px;
+  position: absolute;
+  transform-origin: 0;
+}
+
+.flight-grid__route--one {
+  left: 22%;
+  top: 42%;
+  transform: rotate(-24deg);
+  width: 62%;
+}
+
+.flight-grid__route--two {
+  left: 36%;
+  top: 65%;
+  transform: rotate(17deg);
+  width: 50%;
+}
+
+.flight-grid__node {
+  background: #0b0f14;
+  border: 1px solid #d6b36a;
+  border-radius: 50%;
+  box-shadow: 0 0 0 5px rgb(214 179 106 / 0.08);
+  height: 5px;
+  position: absolute;
+  width: 5px;
+}
+
+.flight-grid__node--one {
+  left: 22%;
+  top: 42%;
+}
+
+.flight-grid__node--two {
+  left: 84%;
+  top: 16%;
+}
+
+.flight-grid__node--three {
+  left: 67%;
+  top: 59%;
+}
+
+.flight-grid__coordinates {
+  bottom: 15%;
+  color: rgb(214 179 106 / 0.38);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  line-height: 1.7;
+  position: absolute;
+  right: 9%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
