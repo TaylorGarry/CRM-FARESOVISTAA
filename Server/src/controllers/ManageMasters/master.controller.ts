@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { BookingType } from "../../models/Booking/BookingType.model";
-import { Currency } from '../../models/Booking/Currency.model';
-import { Source } from '../../models/Booking/Source.model';
-import { CardType } from '../../models/Booking/CardType.model';
-import { EmailTemplate } from '../../models/Booking/EmailTemplate.model';
-import { SaleType } from '../../models/Booking/SaleType.model';
-import { AssignBookingStatus } from '../../models/Booking/AssignBookingStatus.model';
+import { BookingType } from "../../models/ManageMasters/BookingType.model";
+import { Currency } from '../../models/ManageMasters/Currency.model';
+import { Source } from '../../models/ManageMasters/Source.model';
+import { CardType } from '../../models/ManageMasters/CardType.model';
+import { EmailTemplate } from '../../models/ManageMasters/EmailTemplate.model';
+import { SaleType } from '../../models/ManageMasters/SaleType.model';
+import { AssignBookingStatus } from '../../models/ManageMasters/AssignBookingStatus.model';
 import { Role } from "../../models/Auth/Role.model";
 
 const getUserId = (req: Request): string => {

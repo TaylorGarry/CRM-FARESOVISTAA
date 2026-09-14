@@ -113,6 +113,13 @@ const accessMenu: MenuItem[] = [
       { sub_id: 7, sub_name: 'Pending Holds',  sub_page: '/bookings/holds' },
     ],
   },
+   {
+    id: 5,
+    name: 'IP Restrictions',
+    children: [
+      { sub_id: 17, sub_name: 'IP Restriction', sub_page: '/users/ip-restriction' },
+    ],
+  },
   {
     id: 4,
     name: 'Attendance System',
