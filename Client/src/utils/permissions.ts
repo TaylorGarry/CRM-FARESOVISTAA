@@ -23,6 +23,31 @@ export const normalizePath = (path: string) => {
   return normalized.length > 1 ? normalized.replace(/\/+$/, '') : normalized;
 };
 
+export const hasRoutePermission = (allowedPaths: Set<string>, path: string) => {
+  const normalizedPath = normalizePath(path);
+
+  if (allowedPaths.has(normalizedPath)) return true;
+
+  const hasBookingAccess = Array.from(allowedPaths).some(allowedPath =>
+    allowedPath === '/bookings' || allowedPath.startsWith('/bookings/')
+  );
+
+  if (
+    hasBookingAccess &&
+    (
+      normalizedPath.startsWith('/bookings/view/') ||
+      normalizedPath.startsWith('/bookings/edit/')
+    )
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+export const getFirstAllowedPath = (allowedPaths: Set<string>) =>
+  Array.from(allowedPaths)[0] || '/dashboard';
+
 export const loadUserPermission = async (user: User | null) => {
   if (!user || isAdminUser(user)) return null;
 

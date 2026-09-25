@@ -353,7 +353,7 @@ const IpRestriction: React.FC = () => {
               </button>
               <button
                 type="button"
-                className="min-w-[34px] h-8 px-3 rounded-md bg-sky-500 text-white text-[13px] font-semibold"
+                className="min-w-8.5 h-8 px-3 rounded-md bg-sky-500 text-white text-[13px] font-semibold"
               >
                 {currentPage}
               </button>

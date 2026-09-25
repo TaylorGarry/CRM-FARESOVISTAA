@@ -3,6 +3,7 @@ import { Request } from 'express';
 export interface AuthUser {
   user_id: number;
   user_login: string;
+  user_name?: string;
   user_role: string;
   isAdmin: boolean;
 }

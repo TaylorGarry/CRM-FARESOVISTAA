@@ -4,6 +4,7 @@ import { env } from '../config/env';
 export interface TokenPayload {
   user_id: number;
   user_login: string;
+  user_name?: string;  
   user_role: string;
   isAdmin: boolean;
   uhist_id?: number;

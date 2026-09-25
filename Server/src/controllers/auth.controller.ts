@@ -9,7 +9,7 @@ import { AuthRequest } from '../types';
 import { hashPassword, isHashedPassword, verifyPassword } from '../utils/password';
 import { isAdminRequest } from '../middleware/admin.middleware';
 
-// PHP: query.php?action=login
+
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { uname, password } = req.body;
@@ -52,6 +52,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         const token = generateToken({
           user_id: 0,
           user_login: uname,
+          user_name: 'Admin', 
           user_role: 'Admin',
           isAdmin: true,
           uhist_id: uhistId
@@ -114,6 +115,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       const token = generateToken({
         user_id: user.user_id,
         user_login: user.user_login,
+        user_name: user.user_name,
         user_role: user.user_role,
         isAdmin,
         uhist_id: uhistId
@@ -144,7 +146,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// PHP: query.php?action=logout
 export const logout = async (req: Request, res: Response): Promise<void> => {
   try {
     const { user_id, user_role, uhist_id } = req.body;
@@ -176,7 +177,6 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// PHP: Check if user is logged in (from index.php)
 export const checkSession = async (req: Request, res: Response): Promise<void> => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -330,7 +330,7 @@ export const createUser = async (req: AuthRequest, res: Response): Promise<void>
   }
 };
 
-// PHP Equivalent: SELECT * FROM tbl_users
+
 export const getUsers = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     // PHP: $sql = mysqli_query($conn, "SELECT * FROM tbl_users WHERE delete_status='False'");
@@ -352,7 +352,7 @@ export const getUsers = async (req: AuthRequest, res: Response): Promise<void> =
   }
 };
 
-// PHP Equivalent: SELECT * FROM tbl_users WHERE user_id = $id
+
 export const getUserById = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -385,7 +385,7 @@ export const getUserById = async (req: AuthRequest, res: Response): Promise<void
   }
 };
 
-// PHP Equivalent: UPDATE tbl_users SET ... WHERE user_id = $id
+
 export const updateUser = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -494,7 +494,6 @@ export const updateUser = async (req: AuthRequest, res: Response): Promise<void>
   }
 };
 
-// PHP Equivalent: UPDATE tbl_users SET delete_status = 'True' WHERE user_id = $id
 export const deleteUser = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -534,7 +533,6 @@ export const deleteUser = async (req: AuthRequest, res: Response): Promise<void>
   }
 };
 
-// PHP Equivalent: UPDATE tbl_users SET user_status = 'Enabled'/'Disabled' WHERE user_id = $id
 export const toggleUserStatus = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -574,6 +572,34 @@ export const toggleUserStatus = async (req: AuthRequest, res: Response): Promise
     res.status(500).json({
       success: false,
       message: 'Failed to update user status'
+    });
+  }
+};
+
+export const getActiveUsers = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const users = await User.find({
+      user_status: 'Enabled',
+      delete_status: 'False',
+    })
+      .select('user_id user_login user_name user_email user_role')
+      .sort({ user_name: 1 })
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: users,
+      count: users.length,
+    });
+  } catch (error) {
+    console.error('Get active users error:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch active users',
     });
   }
 };

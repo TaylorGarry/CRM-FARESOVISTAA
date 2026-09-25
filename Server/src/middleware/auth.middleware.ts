@@ -6,7 +6,7 @@ import { env } from '../config/env';
 export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    
+    console.log('AUTH HIT:::::', req.method, req.path);
     // PHP: if(isset($_SESSION['user_id']) && $_SESSION['user_id']!='')
     if (!token) {
       res.status(401).json({ 
@@ -47,6 +47,7 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
     req.user = {
       user_id: decoded.user_id,
       user_login: decoded.user_login,
+      user_name: (decoded as any).user_name ?? decoded.user_login,
       user_role: decoded.user_role,
       isAdmin: decoded.isAdmin
     };

@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import {
+  getFirstAllowedPath,
+  isAdminUser,
+  loadUserPermission,
+} from '../utils/permissions';
 
 const EyeIcon = ({ visible }: { visible: boolean }) => (
   <svg
@@ -56,7 +61,7 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuth();
+  const { login, user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -65,10 +70,33 @@ const Login: React.FC = () => {
       setError('Invalid username or password');
     }
 
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [location, isAuthenticated, navigate]);
+    if (!isAuthenticated || !user) return;
+
+    let active = true;
+    const redirectAfterLogin = async () => {
+      if (isAdminUser(user)) {
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+
+      try {
+        const permission = await loadUserPermission(user);
+        if (active) {
+          navigate(
+            permission ? getFirstAllowedPath(permission.allowedPaths) : '/dashboard',
+            { replace: true }
+          );
+        }
+      } catch {
+        if (active) navigate('/dashboard', { replace: true });
+      }
+    };
+
+    redirectAfterLogin();
+    return () => {
+      active = false;
+    };
+  }, [location, isAuthenticated, navigate, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +111,6 @@ const Login: React.FC = () => {
       }
 
       await login(email, password);
-      navigate('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Invalid username or password');
     } finally {

@@ -1,3 +1,4 @@
+import "./config/load-env";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -8,8 +9,10 @@ import passwordRoutes from "./routes/password.routes";
 import { seedAccessMenu } from "./config/seedAccessMenu";
 import { Role } from "./models/Auth/Role.model";
 import  ipRestrictionRoutes  from "./routes/IpRestriction/IpRestriction.routes";
+import bookingRoutes from "./routes/bookingRoutes/booking.routes";
 import masterRoutes from "./routes/ManageMaster/master.routes";
-dotenv.config();
+import uploadRoutes from "./routes/bookingRoutes/upload.routes";
+// dotenv.config();
 
 const app = express();
 
@@ -31,7 +34,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/password", passwordRoutes);
 app.use("/api/master", masterRoutes);
 app.use('/api/ip-restrictions', ipRestrictionRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/uploads', uploadRoutes);
 app.use("/api", userRoutes);
+
 const PORT = process.env.PORT || 5000;
 
 const startServer = async (): Promise<void> => {

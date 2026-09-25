@@ -87,10 +87,10 @@ const ForgotPassword: React.FC = () => {
           </div>
         </div>
 
-        <div className="relative z-10 flex min-h-screen flex-col justify-between px-[42px] py-[52px] min-[901px]:px-20 min-[1200px]:px-[100px]">
+        <div className="relative z-10 flex min-h-screen flex-col justify-between px-10.5 py-13 min-[901px]:px-20 min-[1200px]:px-25">
           <BrandLockup />
 
-          <div className="max-w-[510px] py-[10vh]">
+          <div className="max-w-127.5 py-[10vh]">
             <p className="mb-5 text-[10px] font-bold tracking-[0.23em] text-[#d6b36a]">
               ACCOUNT RECOVERY
             </p>
@@ -99,13 +99,13 @@ const ForgotPassword: React.FC = () => {
               <br />
               <em className="not-italic text-[#e6cc93]">password?</em>
             </h1>
-            <p className="mt-[30px] max-w-[350px] text-[15px] leading-[1.75] text-[#8c96a2]">
+            <p className="mt-7.5 max-w-87.5 text-[15px] leading-[1.75] text-[#8c96a2]">
               Enter your registered email or username to begin the password recovery process.
             </p>
           </div>
 
-          <div className="flex items-center gap-[11px] text-[10px] uppercase tracking-[0.12em] text-[#8c96a2]">
-            <span className="size-[6px] rounded-full bg-[#d6b36a] shadow-[0_0_0_4px_rgba(214,179,106,0.13)]" />
+          <div className="flex items-center gap-2.75 text-[10px] uppercase tracking-[0.12em] text-[#8c96a2]">
+            <span className="size-1.5 rounded-full bg-[#d6b36a] shadow-[0_0_0_4px_rgba(214,179,106,0.13)]" />
             <span>Systems operational</span>
             <span className="h-px w-7 bg-[rgba(231,226,211,0.15)]" />
             <span>v2.4.0</span>
@@ -114,13 +114,13 @@ const ForgotPassword: React.FC = () => {
       </aside>
 
       {/* Right Section - Form */}
-      <section className="relative flex min-h-screen min-w-0 flex-col justify-center overflow-x-hidden border-l border-white/[0.05] bg-[#121820] px-6 py-7 min-[421px]:px-8 min-[701px]:px-[52px] min-[701px]:py-[42px] min-[901px]:px-24 min-[1200px]:px-32">
-        <div className="mb-[76px] mt-2 flex min-[701px]:hidden">
+      <section className="relative flex min-h-screen min-w-0 flex-col justify-center overflow-x-hidden border-l border-white/5 bg-[#121820] px-6 py-7 min-[421px]:px-8 min-[701px]:px-13 min-[701px]:py-10.5 min-[901px]:px-24 min-[1200px]:px-32">
+        <div className="mb-19 mt-2 flex min-[701px]:hidden">
           <BrandLockup />
         </div>
 
-        <div className="m-auto min-w-0 w-full max-w-[460px] min-[701px]:max-w-[390px]">
-          <div className="mb-[38px]">
+        <div className="m-auto min-w-0 w-full max-w-115 min-[701px]:max-w-97.5">
+          <div className="mb-9.5">
             <p className="mb-3.5 text-[10px] font-bold tracking-[0.23em] text-[#d6b36a]">
               RESET PASSWORD
             </p>
@@ -153,14 +153,14 @@ const ForgotPassword: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
-                    className="h-[52px] rounded border border-[rgba(231,226,211,0.15)] bg-[#18212b] px-3.5 text-sm font-normal text-[#f4f0e7] outline-none transition placeholder:text-[#66717d] focus:border-[#d6b36a] focus:ring-4 focus:ring-[#d6b36a]/10 disabled:opacity-70"
+                    className="h-13 rounded border border-[rgba(231,226,211,0.15)] bg-[#18212b] px-3.5 text-sm font-normal text-[#f4f0e7] outline-none transition placeholder:text-[#66717d] focus:border-[#d6b36a] focus:ring-4 focus:ring-[#d6b36a]/10 disabled:opacity-70"
                   />
                 </label>
 
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="inline-flex h-[50px] text-base font-bold w-full items-center justify-center gap-2 rounded bg-[#d6b36a] px-5 cursor-pointer text-[#0b0f14] shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition hover:bg-[#e6cc93] disabled:cursor-wait disabled:opacity-70"
+                  className="inline-flex h-12.5  font-bold w-full items-center justify-center gap-2 rounded bg-[#d6b36a] px-5 cursor-pointer text-[#ededef] shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition hover:bg-[#e6cc93] disabled:cursor-wait disabled:opacity-70"
                 >
                   {isLoading ? 'Sending...' : 'Send reset instructions'}
                   {!isLoading && (
@@ -174,16 +174,16 @@ const ForgotPassword: React.FC = () => {
           )}
 
           <div className="mt-6 text-center">
-            <Link to="/login" className="text-xs font-bold text-[#d6b36a] hover:underline inline-flex items-center gap-1.5">
+            <Link to="/login" className="text-sm font-bold text-[#d6b36a] hover:underline inline-flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               Back to login
             </Link>
           </div>
         </div>
 
-        <div className="mt-18 flex flex-wrap items-center justify-center gap-2 text-center text-[7px] uppercase tracking-[0.12em] text-[#65707b] min-[421px]:gap-[11px] min-[421px]:text-[8px] min-[701px]:mt-auto min-[701px]:text-[9px]">
+        <div className="mt-18 flex flex-wrap items-center justify-center gap-2 text-center text-[7px] uppercase tracking-[0.12em] text-[#65707b] min-[421px]:gap-2.75 min-[421px]:text-[8px] min-[701px]:mt-auto min-[701px]:text-[9px]">
           <span>SECURE ENTERPRISE WORKSPACE</span>
           <span className="h-px w-7 bg-[rgba(231,226,211,0.15)]" />
           <span>AUTHENTICATION</span>

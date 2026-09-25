@@ -444,12 +444,12 @@ const RolePermission: React.FC = () => {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role Name</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden md:table-cell">Main Menu</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Sub Menu</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider">#</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider">Role Name</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider hidden md:table-cell">Main Menu</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider hidden lg:table-cell">Sub Menu</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-2 text-right text-xs font-medium text-black uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -480,14 +480,11 @@ const RolePermission: React.FC = () => {
                 ) : (
                   currentPermissions.map((rolePerm, index) => (
                     <tr key={rolePerm.roleper_id} className="hover:bg-gray-50/60 transition-colors">
-                      <td className="px-4 py-2.5 text-xs text-gray-400 font-medium">
+                      <td className="px-4 py-2.5 text-xs  text-black font-medium">
                         {indexOfFirstItem + index + 1}
                       </td>
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-xs">
-                            {getRoleName(rolePerm.roleper_roleid).charAt(0)}
-                          </div>
                           <span className="font-medium text-gray-800 text-sm">
                             {getRoleName(rolePerm.roleper_roleid)}
                           </span>

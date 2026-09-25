@@ -58,7 +58,7 @@ const CreateRole: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       setLoading(true);
       const roleData = {
@@ -78,9 +78,9 @@ const CreateRole: React.FC = () => {
       resetForm();
       setTimeout(() => setMessage(null), 3000);
     } catch (error: any) {
-      setMessage({ 
-        text: error.response?.data?.message || 'Error saving role!', 
-        type: 'error' 
+      setMessage({
+        text: error.response?.data?.message || 'Error saving role!',
+        type: 'error'
       });
       console.error('Error:', error);
     } finally {
@@ -156,24 +156,24 @@ const CreateRole: React.FC = () => {
     setEditId('');
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  // const getInitials = (name: string) => {
+  //   return name
+  //     .split(' ')
+  //     .map(word => word.charAt(0))
+  //     .join('')
+  //     .toUpperCase()
+  //     .slice(0, 2);
+  // };
 
-  const getRandomColor = (name: string) => {
-    const colors = [
-      'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 
-      'bg-indigo-500', 'bg-teal-500', 'bg-orange-500', 'bg-cyan-500',
-      'bg-rose-500', 'bg-amber-500'
-    ];
-    const index = name.length % colors.length;
-    return colors[index];
-  };
+  // const getRandomColor = (name: string) => {
+  //   const colors = [
+  //     'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500',
+  //     'bg-indigo-500', 'bg-teal-500', 'bg-orange-500', 'bg-cyan-500',
+  //     'bg-rose-500', 'bg-amber-500'
+  //   ];
+  //   const index = name.length % colors.length;
+  //   return colors[index];
+  // };
 
   // Filter roles based on search
   const filteredRoles = roles.filter(role =>
@@ -227,11 +227,10 @@ const CreateRole: React.FC = () => {
 
         {/* Message Toast */}
         {message && (
-          <div className={`fixed left-1/2 top-20 z-[60] w-[min(92vw,48rem)] -translate-x-1/2 rounded-lg p-3 shadow-lg flex items-center justify-between ${
-            message.type === 'success' 
-              ? 'bg-green-50 border border-green-200 text-green-700' 
+          <div className={`fixed left-1/2 top-20 z-60 w-[min(92vw,48rem)] -translate-x-1/2 rounded-lg p-3 shadow-lg flex items-center justify-between ${message.type === 'success'
+              ? 'bg-green-50 border border-green-200 text-green-700'
               : 'bg-red-50 border border-red-200 text-red-700'
-          }`}>
+            }`}>
             <div className="flex items-center gap-2">
               {message.type === 'success' ? (
                 <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -281,13 +280,13 @@ const CreateRole: React.FC = () => {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role Name</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden md:table-cell">Department Role</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Add Date</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Add By</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider">#</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider">Role Name</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider hidden md:table-cell">Department Role</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider hidden lg:table-cell">Add Date</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider hidden lg:table-cell">Add By</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-2 text-right text-xs font-medium text-black uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -318,15 +317,14 @@ const CreateRole: React.FC = () => {
                 ) : (
                   currentRoles.map((role, index) => (
                     <tr key={role.role_id} className="hover:bg-gray-50/60 transition-colors">
-                      <td className="px-4 py-2.5 text-xs text-gray-400 font-medium">
+                      <td className="px-4 py-2.5 text-xs  text-black font-medium">
                         {indexOfFirstItem + index + 1}
                       </td>
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-2.5">
-                          <div className={`w-8 h-8 rounded-lg ${getRandomColor(role.role_name)} flex items-center justify-center text-white font-semibold text-xs shadow-sm`}>
-                            {getInitials(role.role_name)}
-                          </div>
-                          <span className="font-medium text-gray-800 text-sm">{role.role_name}</span>
+                          <span className="font-medium text-gray-800 text-sm">
+                            {role.role_name}
+                          </span>
                         </div>
                       </td>
                       <td className="px-4 py-2.5 hidden md:table-cell">
@@ -334,28 +332,26 @@ const CreateRole: React.FC = () => {
                           {role.department_role}
                         </span>
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-gray-500 hidden lg:table-cell">
+                      <td className="px-4 py-2.5 text-xs font-medium text-black hidden lg:table-cell">
                         {role.add_date ? new Date(role.add_date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric'
                         }) : '-'}
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-gray-600 hidden lg:table-cell">
+                      <td className="px-4 py-2.5 text-xs font-medium text-black hidden lg:table-cell">
                         {role.add_by === '0' ? 'Admin' : role.add_by || '-'}
                       </td>
                       <td className="px-4 py-2.5">
                         <button
                           onClick={() => handleStatusToggle(role.role_id!, role.role_status)}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium transition cursor-pointer ${
-                            role.role_status === 'Enabled'
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium transition cursor-pointer ${role.role_status === 'Enabled'
                               ? 'bg-green-100 text-green-700 hover:bg-green-200'
                               : 'bg-red-100 text-red-700 hover:bg-red-200'
-                          }`}
+                            }`}
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full ${
-                            role.role_status === 'Enabled' ? 'bg-green-500' : 'bg-red-500'
-                          }`}></span>
+                          <span className={`w-1.5 h-1.5 rounded-full ${role.role_status === 'Enabled' ? 'bg-green-500' : 'bg-red-500'
+                            }`}></span>
                           {role.role_status}
                         </button>
                       </td>
@@ -414,17 +410,16 @@ const CreateRole: React.FC = () => {
                     } else {
                       pageNum = currentPage - 2 + i;
                     }
-                    
+
                     if (pageNum > 0 && pageNum <= totalPages) {
                       return (
                         <button
                           key={pageNum}
                           onClick={() => paginate(pageNum)}
-                          className={`w-7 h-7 rounded-lg text-xs font-medium transition cursor-pointer ${
-                            currentPage === pageNum
+                          className={`w-7 h-7 rounded-lg text-xs font-medium transition cursor-pointer ${currentPage === pageNum
                               ? 'bg-[#0084D1] text-white shadow-sm'
                               : 'text-gray-600 hover:bg-gray-200'
-                          }`}
+                            }`}
                         >
                           {pageNum}
                         </button>
@@ -444,7 +439,7 @@ const CreateRole: React.FC = () => {
                   <span>Rows:</span>
                   <select
                     value={itemsPerPage}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     className="bg-white border border-gray-300 rounded px-1.5 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#0084D1]/20 cursor-pointer"
                   >
                     <option value="10">10</option>

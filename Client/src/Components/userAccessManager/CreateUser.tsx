@@ -108,7 +108,7 @@
 
 //   const handleSubmit = async (e: React.FormEvent) => {
 //     e.preventDefault();
-    
+
 //     if (formData.user_password !== formData.cnf_password) {
 //       setMessage({ text: 'Passwords do not match!', type: 'error' });
 //       return;
@@ -539,7 +539,7 @@
 //                     } else {
 //                       pageNum = currentPage - 2 + i;
 //                     }
-                    
+
 //                     if (pageNum > 0 && pageNum <= totalPages) {
 //                       return (
 //                         <button
@@ -1135,7 +1135,7 @@ const CreateUser: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  
+
   // Calendar state
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
@@ -1219,7 +1219,7 @@ const CreateUser: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (formData.user_password !== formData.cnf_password) {
       setMessage({ text: 'Passwords do not match!', type: 'error' });
       return;
@@ -1258,9 +1258,9 @@ const CreateUser: React.FC = () => {
       resetForm();
       setTimeout(() => setMessage(null), 3000);
     } catch (error: any) {
-      setMessage({ 
-        text: error.response?.data?.message || 'Error saving user!', 
-        type: 'error' 
+      setMessage({
+        text: error.response?.data?.message || 'Error saving user!',
+        type: 'error'
       });
       console.error('Error:', error);
     } finally {
@@ -1377,24 +1377,24 @@ const CreateUser: React.FC = () => {
     return role ? role.role_name : roleId;
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  // const getInitials = (name: string) => {
+  //   return name
+  //     .split(' ')
+  //     .map(word => word.charAt(0))
+  //     .join('')
+  //     .toUpperCase()
+  //     .slice(0, 2);
+  // };
 
-  const getRandomColor = (name: string) => {
-    const colors = [
-      'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 
-      'bg-indigo-500', 'bg-teal-500', 'bg-orange-500', 'bg-cyan-500',
-      'bg-rose-500', 'bg-amber-500'
-    ];
-    const index = name.length % colors.length;
-    return colors[index];
-  };
+  // const getRandomColor = (name: string) => {
+  //   const colors = [
+  //     'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500',
+  //     'bg-indigo-500', 'bg-teal-500', 'bg-orange-500', 'bg-cyan-500',
+  //     'bg-rose-500', 'bg-amber-500'
+  //   ];
+  //   const index = name.length % colors.length;
+  //   return colors[index];
+  // };
 
   // Filter users based on search
   const filteredUsers = users.filter(user =>
@@ -1460,11 +1460,10 @@ const CreateUser: React.FC = () => {
 
         {/* Message Toast */}
         {message && (
-          <div className={`mb-4 p-3 rounded-lg flex items-center justify-between ${
-            message.type === 'success' 
-              ? 'bg-green-50 border border-green-200 text-green-700' 
+          <div className={`mb-4 p-3 rounded-lg flex items-center justify-between ${message.type === 'success'
+              ? 'bg-green-50 border border-green-200 text-green-700'
               : 'bg-red-50 border border-red-200 text-red-700'
-          }`}>
+            }`}>
             <div className="flex items-center gap-2">
               {message.type === 'success' ? (
                 <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1514,16 +1513,16 @@ const CreateUser: React.FC = () => {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden md:table-cell">Gender</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Mobile</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden xl:table-cell">Email</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden xl:table-cell">Username</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Add Date</th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+                  <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">#</th>
+                  <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Name</th>
+                  <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Role</th>
+                  <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider hidden md:table-cell">Gender</th>
+                  <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider hidden lg:table-cell">Mobile</th>
+                  <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider hidden xl:table-cell">Email</th>
+                  <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider hidden xl:table-cell">Username</th>
+                  <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider hidden lg:table-cell">Add Date</th>
+                  <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-2 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -1554,15 +1553,14 @@ const CreateUser: React.FC = () => {
                 ) : (
                   currentUsers.map((user, index) => (
                     <tr key={user.user_id} className="hover:bg-gray-50/60 transition-colors">
-                      <td className="px-4 py-2.5 text-xs text-gray-400 font-medium">
+                      <td className="px-4 py-2.5 text-xs font-medium text-black ">
                         {indexOfFirstItem + index + 1}
                       </td>
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-2.5">
-                          <div className={`w-8 h-8 rounded-lg ${getRandomColor(user.user_name)} flex items-center justify-center text-white font-semibold text-xs shadow-sm`}>
-                            {getInitials(user.user_name)}
-                          </div>
-                          <span className="font-medium text-gray-800 text-sm">{user.user_name}</span>
+                          <span className="font-medium text-gray-800 text-sm">
+                            {user.user_name}
+                          </span>
                         </div>
                       </td>
                       <td className="px-4 py-2.5">
@@ -1570,19 +1568,19 @@ const CreateUser: React.FC = () => {
                           {getRoleName(user.user_role)}
                         </span>
                       </td>
-                      <td className="px-4 py-2.5 text-sm text-gray-600 hidden md:table-cell">
+                      <td className="px-4 py-2.5 text-sm font-medium text-black hidden md:table-cell">
                         {user.user_gender}
                       </td>
-                      <td className="px-4 py-2.5 text-sm text-gray-600 hidden lg:table-cell">
+                      <td className="px-4 py-2.5 text-sm font-medium text-black hidden lg:table-cell">
                         {user.user_mobile}
                       </td>
-                      <td className="px-4 py-2.5 text-sm text-gray-600 hidden xl:table-cell">
+                      <td className="px-4 py-2.5 text-sm font-medium text-black hidden xl:table-cell">
                         {user.user_email}
                       </td>
-                      <td className="px-4 py-2.5 text-sm text-gray-600 hidden xl:table-cell">
+                      <td className="px-4 py-2.5 text-sm font-medium text-black hidden xl:table-cell">
                         {user.user_login}
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-gray-500 hidden lg:table-cell">
+                      <td className="px-4 py-2.5 text-xs font-medium text-black hidden lg:table-cell">
                         {user.add_date ? new Date(user.add_date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
@@ -1592,15 +1590,13 @@ const CreateUser: React.FC = () => {
                       <td className="px-4 py-2.5">
                         <button
                           onClick={() => handleStatusToggle(user.user_id!, user.user_status)}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium transition ${
-                            user.user_status === 'Enabled'
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium transition ${user.user_status === 'Enabled'
                               ? 'bg-green-100 text-green-700 hover:bg-green-200'
                               : 'bg-red-100 text-red-700 hover:bg-red-200'
-                          }`}
+                            }`}
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full ${
-                            user.user_status === 'Enabled' ? 'bg-green-500' : 'bg-red-500'
-                          }`}></span>
+                          <span className={`w-1.5 h-1.5 rounded-full ${user.user_status === 'Enabled' ? 'bg-green-500' : 'bg-red-500'
+                            }`}></span>
                           {user.user_status}
                         </button>
                       </td>
@@ -1659,17 +1655,16 @@ const CreateUser: React.FC = () => {
                     } else {
                       pageNum = currentPage - 2 + i;
                     }
-                    
+
                     if (pageNum > 0 && pageNum <= totalPages) {
                       return (
                         <button
                           key={pageNum}
                           onClick={() => paginate(pageNum)}
-                          className={`w-7 h-7 rounded-lg text-xs font-medium transition ${
-                            currentPage === pageNum
+                          className={`w-7 h-7 rounded-lg text-xs font-medium transition ${currentPage === pageNum
                               ? 'bg-[#0084D1] text-white shadow-sm'
                               : 'text-gray-600 hover:bg-gray-200'
-                          }`}
+                            }`}
                         >
                           {pageNum}
                         </button>
@@ -1689,7 +1684,7 @@ const CreateUser: React.FC = () => {
                   <span>Rows:</span>
                   <select
                     value={itemsPerPage}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     className="bg-white border border-gray-300 rounded px-1.5 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#0084D1]/20"
                   >
                     <option value="10">10</option>
@@ -2122,11 +2117,11 @@ const CreateUser: React.FC = () => {
 
       {/* Calendar Modal - Centered on Screen */}
       {showCalendar && (
-        <div 
+        <div
           className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn"
           onClick={handleCalendarClose}
         >
-          <div 
+          <div
             className="bg-white rounded-2xl shadow-2xl p-4 max-w-sm w-full mx-4"
             onClick={(e) => e.stopPropagation()}
           >
@@ -2141,17 +2136,17 @@ const CreateUser: React.FC = () => {
                 </svg>
               </button>
             </div>
-            
+
             <ThemeProvider theme={whiteTheme}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Box sx={{ 
+                <Box sx={{
                   backgroundColor: '#ffffff',
                   borderRadius: '12px',
                   padding: '0',
                   display: 'flex',
                   justifyContent: 'center',
                 }}>
-                  <DateCalendar 
+                  <DateCalendar
                     value={selectedDate}
                     onChange={handleDateChange}
                     views={['year', 'month', 'day']}
@@ -2210,7 +2205,7 @@ const CreateUser: React.FC = () => {
                 </Box>
               </LocalizationProvider>
             </ThemeProvider>
-            
+
             <div className="flex justify-end gap-2 mt-3 px-2">
               <button
                 onClick={handleCalendarClose}

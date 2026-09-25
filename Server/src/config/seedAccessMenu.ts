@@ -105,14 +105,35 @@ const accessMenu: MenuItem[] = [
       { sub_id: 16, sub_name: 'Assign Booking Status',  sub_page: '/master/assign-booking-status' },
     ],
   },
+  // {
+  //   id: 3,
+  //   name: 'Booking Management',
+  //   children: [
+  //     { sub_id: 6, sub_name: 'Add Bookings',   sub_page: '/bookings/all' },
+  //     { sub_id: 7, sub_name: 'Pending Holds',  sub_page: '/bookings/holds' },
+  //   ],
+  // },
   {
-    id: 3,
-    name: 'Booking Management',
-    children: [
-      { sub_id: 6, sub_name: 'All Bookings',   sub_page: '/bookings/all' },
-      { sub_id: 7, sub_name: 'Pending Holds',  sub_page: '/bookings/holds' },
-    ],
-  },
+  id: 3,
+  name: 'Booking Management',
+  children: [
+    {
+      sub_id: 6,
+      sub_name: 'All Bookings',
+      sub_page: '/bookings/all',
+    },
+    {
+      sub_id: 7,
+      sub_name: 'Add Booking',
+      sub_page: '/bookings/add',
+    },
+    {
+      sub_id: 18,
+      sub_name: 'Pending Holds',
+      sub_page: '/bookings/holds',
+    },
+  ],
+},
    {
     id: 5,
     name: 'IP Restrictions',

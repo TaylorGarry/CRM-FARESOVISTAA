@@ -171,33 +171,49 @@ import axios from 'axios';
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import type { AuthResponse, LoginCredentials, ChangePasswordData, ForgotPasswordData, ResetPasswordData, User, Role, Module, Submodule } from '../types';
 
+export interface ActiveUser {
+  user_id: number;
+  user_login: string;
+  user_name: string;
+  user_email: string;
+  user_role: string;
+}
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
 class ApiService {
   private api: AxiosInstance;
 
   constructor() {
     this.api = axios.create({
       baseURL: API_URL,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      // headers: {
+      //   'Content-Type': 'application/json',
+      // },
       withCredentials: true,
     });
 
     // Request interceptor to add token
-    this.api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      const lastActivity = localStorage.getItem('last_activity');
-      if (lastActivity) {
-        config.headers['x-last-activity'] = lastActivity;
-      }
-      return config;
-    });
-
+    // this.api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    //   const token = localStorage.getItem('auth_token');
+    //   if (token) {
+    //     config.headers.Authorization = `Bearer ${token}`;
+    //   }
+    //   const lastActivity = localStorage.getItem('last_activity');
+    //   if (lastActivity) {
+    //     config.headers['x-last-activity'] = lastActivity;
+    //   }
+    //   return config;
+    // });
+  this.api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    const lastActivity = localStorage.getItem('last_activity');
+    if (lastActivity) {
+      config.headers['x-last-activity'] = lastActivity;
+    }
+    return config;
+  });
     // Response interceptor to handle session expiry
     this.api.interceptors.response.use(
       (response) => response,
@@ -304,6 +320,15 @@ class ApiService {
   }
 
   async listUsers(): Promise<User[]> { return (await this.api.get('/users')).data.data; }
+  async listActiveUsers(): Promise<ActiveUser[]> {
+  const response = await this.api.get<{
+    success: boolean;
+    data: ActiveUser[];
+    count: number;
+  }>('/auth/active-users');
+
+  return response.data.data;
+}
   async getUserById(id: number): Promise<User> { return (await this.api.get(`/users/${id}`)).data.data; }
   async createUser(data: Record<string, unknown>) { return (await this.api.post('/users', data)).data; }
   async updateUser(id: number, data: Record<string, unknown>) { return (await this.api.put(`/users/${id}`, data)).data; }
