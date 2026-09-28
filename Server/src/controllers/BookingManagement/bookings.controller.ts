@@ -64,6 +64,8 @@ const getBookingVisibilityFilter = async (req: Request): Promise<Record<string, 
   return {
     $or: [
       { add_by: userId },
+      { add_by: user.user_login },
+      { add_by: getUserDisplayName(user) },
       { _id: { $in: assignedBookingIds } },
     ],
   };
@@ -204,7 +206,7 @@ export const createBooking = async (
 
     const booking = await BookingModel.create({
       ...payload,
-      add_by: String(user.user_id),
+      add_by: getUserDisplayName(user),
       add_date: new Date(),
       update_by: null,
       update_date: null,
@@ -398,7 +400,7 @@ export const updateBooking = async (
     const payload = buildBookingPayload(req.body);
 
     Object.assign(existing, payload, {
-      update_by: String(user.user_id),
+      update_by: getUserDisplayName(user),
       update_date: new Date(),
     });
 
@@ -441,7 +443,7 @@ export const updateBookingStatus = async (
     }
 
     existing.booking_status = String(booking_status).trim();
-    existing.update_by = String(user.user_id);
+    existing.update_by = getUserDisplayName(user);
     existing.update_date = new Date();
     await existing.save();
 
@@ -662,7 +664,7 @@ export const addRemark = async (
       booking.booking_status = String(booking_status).trim();
     }
     booking.remarks = String(remarks).trim();
-    booking.update_by = userIdStr;
+    booking.update_by = getUserDisplayName(user);
     booking.update_date = new Date();
 
     // Release lock
@@ -827,7 +829,7 @@ export const updateSearchInfo = async (req: Request, res: Response): Promise<Res
     booking.departure_date = String(req.body.departure_date || '').trim();
     booking.return_date = String(req.body.return_date || '').trim();
     booking.reason_of_sale = String(req.body.reason_of_sale || '').trim();
-    booking.update_by = String(user.user_id);
+    booking.update_by = getUserDisplayName(user);
     booking.update_date = new Date();
     await booking.save();
 
@@ -883,7 +885,7 @@ export const updateBookingInfo = async (req: Request, res: Response): Promise<Re
     if (req.body.arc !== undefined) booking.arc = String(req.body.arc).trim();
     if (req.body.net_mco !== undefined) booking.net_mco = Number(req.body.net_mco) || 0;
 
-    booking.update_by = String(user.user_id);
+    booking.update_by = getUserDisplayName(user);
     booking.update_date = new Date();
     await booking.save();
 
@@ -913,7 +915,7 @@ export const updateItinerary = async (req: Request, res: Response): Promise<Resp
 
     const user = getUser(req);
     booking.itinerary_html = String(req.body.itinerary_html || '');
-    booking.update_by = String(user.user_id);
+    booking.update_by = getUserDisplayName(user);
     booking.update_date = new Date();
     await booking.save();
 
@@ -955,7 +957,7 @@ export const updateContactInfo = async (req: Request, res: Response): Promise<Re
     if (req.body.city !== undefined) booking.city = String(req.body.city).trim();
     if (req.body.pincode !== undefined) booking.pincode = String(req.body.pincode).trim();
 
-    booking.update_by = String(user.user_id);
+    booking.update_by = getUserDisplayName(user);
     booking.update_date = new Date();
     await booking.save();
 
@@ -1005,7 +1007,7 @@ export const updatePaxInfo = async (req: Request, res: Response): Promise<Respon
     }
 
     booking.pax = pax;
-    booking.update_by = String(user.user_id);
+    booking.update_by = getUserDisplayName(user);
     booking.update_date = new Date();
     await booking.save();
 
@@ -1042,7 +1044,7 @@ export const updatePaymentInfo = async (req: Request, res: Response): Promise<Re
     if (req.body.card_expiry_month !== undefined) booking.card_expiry_month = String(req.body.card_expiry_month).trim();
     if (req.body.card_expiry_year !== undefined) booking.card_expiry_year = String(req.body.card_expiry_year).trim();
 
-    booking.update_by = String(user.user_id);
+    booking.update_by = getUserDisplayName(user);
     booking.update_date = new Date();
     await booking.save();
 

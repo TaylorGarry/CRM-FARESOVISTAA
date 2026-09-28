@@ -232,8 +232,8 @@ const BookingsList: React.FC = () => {
       ),
     },
     {
-      key: 'airline_pnr',
-      label: 'Airline PNR',
+      key: 'add_by',
+      label: 'Add By',
     },
     {
       key: 'customer_name',
@@ -245,22 +245,14 @@ const BookingsList: React.FC = () => {
       ),
     },
     {
-      key: 'trip_type',
-      label: 'Trip',
-      render: (v: string) => (
-        <span className="text-slate-700">
-          {v || '-'}
-        </span>
-      ),
+      key: 'assign_by',
+      label: 'Assign By',
+      render: () => <span className="text-slate-700">N/A</span>,
     },
     {
-      key: 'from',
-      label: 'From → To',
-      render: (_: any, r: BookingRecord) => (
-        <span className="text-slate-700">
-          {r.from} → {r.destination}
-        </span>
-      ),
+      key: 'assign_to',
+      label: 'Assign To',
+      render: () => <span className="text-slate-700">N/A</span>,
     },
     {
       key: 'departure_date',
