@@ -125,7 +125,7 @@ const accessMenu: MenuItem[] = [
     {
       sub_id: 7,
       sub_name: 'Add Booking',
-      sub_page: '/bookings/add',
+      sub_page: '/bookings/new',
     },
     {
       sub_id: 18,
@@ -141,6 +141,14 @@ const accessMenu: MenuItem[] = [
       { sub_id: 17, sub_name: 'IP Restriction', sub_page: '/users/ip-restriction' },
     ],
   },
+  {
+  id: 6,
+  name: 'Break Tracker',
+  children: [
+    { sub_id: 20, sub_name: 'Activity Type',  sub_page: '/break-tracker/activity-type' },
+    { sub_id: 21, sub_name: 'Break Tracker',  sub_page: '/break-tracker/tracker' },
+  ],
+},
   {
     id: 4,
     name: 'Attendance System',

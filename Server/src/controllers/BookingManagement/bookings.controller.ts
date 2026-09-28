@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import BookingModel, { IBooking } from '../../models/Bookings/bookings.model';
 import BookingHistoryModel from "../../models/Bookings/bookingHistory.model"
 import AssignmentHistoryModel from "../../models/Bookings/assignmentHistory.model"
+import { Role } from '../../models/Auth/Role.model';
 import { verifyToken } from '../../services/token.service';
 
 /* ------------------------------------------------------------------ */
@@ -31,6 +32,42 @@ const getUser = (req: Request): AuthUser => {
 };
 
 const getUserId = (req: Request): string => String(getUser(req).user_id);
+
+const getBookingVisibilityFilter = async (req: Request): Promise<Record<string, any> | null> => {
+  const user = getUser(req);
+
+  if (user.isAdmin || user.user_role?.trim().toLowerCase() === 'admin') {
+    return null;
+  }
+
+  const userId = String(user.user_id);
+  const assignmentConditions: Record<string, string>[] = [
+    { assign_to: userId },
+    { assign_to_login: user.user_login },
+  ];
+
+  const roleId = Number(user.user_role);
+  const roleQuery = Number.isInteger(roleId)
+    ? { $or: [{ role_id: roleId }, { role_name: user.user_role }] }
+    : { role_name: user.user_role };
+  const role = user.user_role ? await Role.findOne(roleQuery).select('department_role').lean() : null;
+  const department = role?.department_role?.trim();
+
+  if (department) {
+    assignmentConditions.push({ department });
+  }
+
+  const assignedBookingIds = await AssignmentHistoryModel.distinct('booking_id', {
+    $or: assignmentConditions,
+  });
+
+  return {
+    $or: [
+      { add_by: userId },
+      { _id: { $in: assignedBookingIds } },
+    ],
+  };
+};
 
 /**
  * Write a row into Booking_history.
@@ -278,6 +315,16 @@ export const getBookings = async (
       }
     }
 
+    const visibilityFilter = await getBookingVisibilityFilter(req);
+    if (visibilityFilter) {
+      const searchFilter = filter.$or;
+      delete filter.$or;
+      filter.$and = [
+        ...(searchFilter ? [{ $or: searchFilter }] : []),
+        visibilityFilter,
+      ];
+    }
+
     const [records, total] = await Promise.all([
       BookingModel.find(filter)
         .sort({ createdAt: -1 })
@@ -313,7 +360,12 @@ export const getBookingById = async (
 ): Promise<Response> => {
   try {
     const { id } = req.params;
-    const booking = await BookingModel.findOne({ _id: id, delete_status: false });
+    const visibilityFilter = await getBookingVisibilityFilter(req);
+    const booking = await BookingModel.findOne({
+      _id: id,
+      delete_status: false,
+      ...(visibilityFilter || {}),
+    });
 
     if (!booking) {
       return res.status(404).json({ success: false, message: 'Booking not found' });

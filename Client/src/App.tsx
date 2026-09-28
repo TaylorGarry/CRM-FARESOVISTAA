@@ -118,6 +118,7 @@ import BookingForm from './Components/Bookings/BookingForm.tsx';
 import BookingsList from './Components/Bookings/BookingList.tsx';
 import BookingDetail from "./Components/Bookings/BookingDetail.tsx";
 import { AssignBookingStatusPage } from './Components/MangeMasters/AssignBookingStatus.tsx';
+import BreakType from './Components/Break/BreakType.tsx';
 
 const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -178,6 +179,7 @@ const App: React.FC = () => {
                         <Route path="/bookings/edit/:id" element={<PermissionRoute><BookingForm /></PermissionRoute>} />
                         <Route path="/bookings/view/:id" element={<PermissionRoute><BookingDetail /></PermissionRoute>} />
 
+                        <Route path="/break-tracker/activity-type" element={<BreakType />} />
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                       </Routes>
                     </main>
