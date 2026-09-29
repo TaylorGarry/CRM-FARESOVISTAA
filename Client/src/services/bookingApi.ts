@@ -73,6 +73,8 @@ export interface BookingRecord {
   lock_session_id?: string | null;
 
   add_by?: string | null;
+  assign_by?: string | null;
+  assign_to?: string | null;
   add_date?: string;
   update_by?: string | null;
   update_date?: string | null;
@@ -126,10 +128,20 @@ export interface BookingAssignmentRecord {
   assign_to: string;
   assign_to_login: string;
   assign_to_name: string;
+  department_id?: string;
+  booking_status: string;
   remarks: string;
+  done_by?: string;
+  done_by_login?: string;
+  done_by_name?: string;
+  handled: boolean;
+  handled_at?: string | null;
+  itinerary_html?: string;
+  screenshot_url?: string;
   assign_date: string;
   created_at: string;
   updated_at: string;
+  booking?: Pick<BookingRecord, '_id' | 'pnr' | 'itinerary_html'> | null;
 }
 
 export interface MyLockResponse {
@@ -189,6 +201,9 @@ interface HistoryListResponse {
 interface AssignmentListResponse {
   success: boolean;
   count: number;
+  total?: number;
+  page?: number;
+  limit?: number;
   data: BookingAssignmentRecord[];
 }
 
@@ -243,6 +258,29 @@ export const bookingApi = {
 
   getAssignments: (id: string) =>
     api.get<AssignmentListResponse>(`/bookings/${id}/assignments`),
+
+  createAssignment: (data: {
+    booking_id: string;
+    department: string;
+    booking_status: string;
+    remarks: string;
+    itinerary_html?: string;
+  }) => api.post<{ success: boolean; message: string; data: BookingAssignmentRecord }>(
+    '/bookings/assignments',
+    data
+  ),
+
+  listAssignments: (params?: { page?: number; limit?: number }) =>
+    api.get<AssignmentListResponse>('/bookings/assignments', { params }),
+
+  handleAssignment: (id: string, data: {
+    booking_status?: string;
+    remarks?: string;
+    handled?: boolean;
+  }) => api.patch<{ success: boolean; message: string; data: BookingAssignmentRecord }>(
+    `/bookings/assignments/${id}/handle`,
+    data
+  ),
 
   /* ---------------- Per-tab partial saves ---------------- */
 

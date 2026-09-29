@@ -82,6 +82,7 @@ const BookingsList: React.FC = () => {
 
   const [data, setData] = useState<BookingRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState<BookingFilters>(initialFilters);
@@ -129,6 +130,7 @@ const BookingsList: React.FC = () => {
       toast.error('Failed to fetch bookings');
     } finally {
       setLoading(false);
+      setHasLoaded(true);
     }
   };
 
@@ -222,6 +224,15 @@ const BookingsList: React.FC = () => {
   };
 
   const columns = [
+     {
+      key: 'add_date',
+      label: 'Add Date',
+      render: (v: string) =>(
+        <span className="font-semibold text-slate-800">
+          {v ? new Date(v).toLocaleDateString() : '-'}
+        </span>
+      )
+    },
     {
       key: 'pnr',
       label: 'PNR',
@@ -231,11 +242,7 @@ const BookingsList: React.FC = () => {
         </span>
       ),
     },
-    {
-      key: 'add_by',
-      label: 'Add By',
-    },
-    {
+     {
       key: 'customer_name',
       label: 'Customer',
       render: (v: string) => (
@@ -245,31 +252,34 @@ const BookingsList: React.FC = () => {
       ),
     },
     {
-      key: 'assign_by',
-      label: 'Assign By',
-      render: () => <span className="text-slate-700">N/A</span>,
-    },
-    {
-      key: 'assign_to',
-      label: 'Assign To',
-      render: () => <span className="text-slate-700">N/A</span>,
-    },
-    {
-      key: 'departure_date',
-      label: 'Departure',
-      render: (v: string) =>
-        v ? new Date(v).toLocaleDateString() : '-',
-    },
-    {
-      key: 'total_amount',
-      label: 'Total',
-      render: (v: number, r: BookingRecord) => (
-        <span className="text-slate-700">
-          {r.currency} {Number(v || 0).toFixed(2)}
+      key: 'add_by',
+      label: 'Add By',
+      render: (v: string) => (
+        <span className="font-medium text-slate-800">
+          {v || '-'}
         </span>
       ),
     },
     {
+      key: 'assign_by',
+      label: 'Assign By',
+      render: (v: string) => <span className= "font-medium text-slate-700">{v || 'N/A'}</span>,
+    },
+    {
+      key: 'assign_to',
+      label: 'Assign To',
+      render: (v: string) => <span className=" font-medium text-slate-700">{v || 'N/A'}</span>,
+    },
+    {
+      key: 'departure_date',
+      label: 'Departure',
+      render: (v: string) =>(
+        <span className="font-semibold text-slate-800">
+          {v ? new Date(v).toLocaleDateString() : '-'}
+        </span>
+      )
+    },
+     {
       key: 'booking_status',
       label: 'Status',
       render: (v: string) => (
@@ -279,10 +289,13 @@ const BookingsList: React.FC = () => {
       ),
     },
     {
-      key: 'add_date',
-      label: 'Add Date',
-      render: (v: string) =>
-        v ? new Date(v).toLocaleDateString() : '-',
+      key: 'total_amount',
+      label: 'Total',
+      render: (v: number) => (
+        <span className="font-medium text-slate-700">
+          {Number(v || 0).toFixed(2)}
+        </span>
+      ),
     },
   ];
 
@@ -359,6 +372,7 @@ const BookingsList: React.FC = () => {
       {/* Assign */}
       <button
         type="button"
+        onClick={() => navigate(`/bookings/assign/${record._id}`)}
         className="px-1.5 py-0.5 text-[11px] font-semibold rounded text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition"
         title="Assign"
       >
@@ -638,13 +652,24 @@ const BookingsList: React.FC = () => {
         </div>
       </div>
 
-      <MasterTable
-        columns={columns}
-        data={data}
-        loading={loading}
-        actions={actions}
-        emptyMessage="No bookings found."
-      />
+      <div className="relative">
+        <div className={loading && hasLoaded ? 'opacity-60 transition-opacity duration-200' : 'transition-opacity duration-200'}>
+          <MasterTable
+            columns={columns}
+            data={data}
+            loading={loading && !hasLoaded}
+            actions={actions}
+            emptyMessage="No bookings found."
+          />
+        </div>
+        {loading && hasLoaded && (
+          <div className="absolute inset-0 flex items-start justify-center pt-8 pointer-events-none">
+            <span className="rounded-full bg-white/95 border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 shadow-sm">
+              Updating...
+            </span>
+          </div>
+        )}
+      </div>
 
       {!loading && total > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-4 pt-4 px-4 py-3 bg-white border border-slate-200 rounded-lg mt-4">

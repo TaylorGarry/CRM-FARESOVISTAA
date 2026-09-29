@@ -3,6 +3,7 @@ import BookingModel, { IBooking } from '../../models/Bookings/bookings.model';
 import BookingHistoryModel from "../../models/Bookings/bookingHistory.model"
 import AssignmentHistoryModel from "../../models/Bookings/assignmentHistory.model"
 import { Role } from '../../models/Auth/Role.model';
+import { User } from '../../models/Auth/User.model';
 import { verifyToken } from '../../services/token.service';
 
 /* ------------------------------------------------------------------ */
@@ -33,6 +34,23 @@ const getUser = (req: Request): AuthUser => {
 
 const getUserId = (req: Request): string => String(getUser(req).user_id);
 
+const getUserDepartments = async (req: Request): Promise<string[]> => {
+  const user = getUser(req);
+  if (!user.user_role) return [];
+
+  const roleId = Number(user.user_role);
+  const roleQuery = Number.isInteger(roleId)
+    ? { $or: [{ role_id: roleId }, { role_name: user.user_role }] }
+    : { role_name: user.user_role };
+  const role = await Role.findOne(roleQuery).select('role_name department_role').lean();
+
+  return Array.from(new Set(
+    [role?.role_name, role?.department_role]
+      .map(value => value?.trim())
+      .filter((value): value is string => Boolean(value))
+  ));
+};
+
 const getBookingVisibilityFilter = async (req: Request): Promise<Record<string, any> | null> => {
   const user = getUser(req);
 
@@ -41,25 +59,25 @@ const getBookingVisibilityFilter = async (req: Request): Promise<Record<string, 
   }
 
   const userId = String(user.user_id);
-  const assignmentConditions: Record<string, string>[] = [
-    { assign_to: userId },
-    { assign_to_login: user.user_login },
-  ];
-
-  const roleId = Number(user.user_role);
-  const roleQuery = Number.isInteger(roleId)
-    ? { $or: [{ role_id: roleId }, { role_name: user.user_role }] }
-    : { role_name: user.user_role };
-  const role = user.user_role ? await Role.findOne(roleQuery).select('department_role').lean() : null;
-  const department = role?.department_role?.trim();
-
-  if (department) {
-    assignmentConditions.push({ department });
-  }
-
-  const assignedBookingIds = await AssignmentHistoryModel.distinct('booking_id', {
-    $or: assignmentConditions,
-  });
+  const departments = await getUserDepartments(req);
+  const latestAssignments = await AssignmentHistoryModel.aggregate([
+    { $sort: { assign_date: -1, _id: -1 } },
+    {
+      $group: {
+        _id: '$booking_id',
+        department: { $first: '$department' },
+        assign_to: { $first: '$assign_to' },
+        assign_to_login: { $first: '$assign_to_login' },
+      },
+    },
+  ]);
+  const assignedBookingIds = latestAssignments
+    .filter(assignment =>
+      departments.includes(String(assignment.department || '').trim()) ||
+      String(assignment.assign_to || '') === String(user.user_id) ||
+      String(assignment.assign_to_login || '') === user.user_login
+    )
+    .map(assignment => String(assignment._id));
 
   return {
     $or: [
@@ -102,6 +120,27 @@ const writeBookingHistory = async (opts: {
 
 const getUserDisplayName = (user: AuthUser) =>
   user.user_name && user.user_name !== 'unknown' ? user.user_name : user.user_login;
+
+const enrichAssignmentNames = async (rows: any[]) => {
+  const userIds = Array.from(new Set(
+    rows
+      .map(row => String(row.assign_by || '').trim())
+      .filter(value => /^\d+$/.test(value))
+  )).map(Number);
+  const users = userIds.length
+    ? await User.find({ user_id: { $in: userIds } }).select('user_id user_login user_name').lean()
+    : [];
+  const usersById = new Map(users.map(user => [String(user.user_id), user]));
+
+  return rows.map(row => {
+    const assigner = usersById.get(String(row.assign_by || ''));
+    return {
+      ...row,
+      assign_by_name: row.assign_by_name || row.assign_by_login || assigner?.user_name || assigner?.user_login || row.assign_by || '',
+      assign_to_name: row.assign_to_name || row.assign_to_login || row.assign_to || '',
+    };
+  });
+};
 
 /**
  * Normalize + sanitize incoming booking payload (create/update).
@@ -335,13 +374,34 @@ export const getBookings = async (
       BookingModel.countDocuments(filter),
     ]);
 
+    const assignmentRows = await AssignmentHistoryModel.find({
+      booking_id: { $in: records.map(record => String(record._id)) },
+    })
+      .sort({ assign_date: -1 })
+      .lean();
+    const enrichedAssignments = await enrichAssignmentNames(assignmentRows);
+    const latestAssignmentByBooking = new Map<string, any>();
+    for (const assignment of enrichedAssignments) {
+      if (!latestAssignmentByBooking.has(String(assignment.booking_id))) {
+        latestAssignmentByBooking.set(String(assignment.booking_id), assignment);
+      }
+    }
+    const data = records.map(record => {
+      const assignment = latestAssignmentByBooking.get(String(record._id));
+      return {
+        ...record.toObject(),
+        assign_by: assignment?.assign_by_name || 'N/A',
+        assign_to: assignment?.assign_to_name || 'N/A',
+      };
+    });
+
     return res.status(200).json({
       success: true,
       count: records.length,
       total,
       page,
       limit,
-      data: records,
+      data,
     });
   } catch (error) {
     console.error('Get bookings error:', error);
@@ -773,18 +833,213 @@ export const getBookingAssignments = async (
   try {
     const { id } = req.params;
 
+    const visibilityFilter = await getBookingVisibilityFilter(req);
+    const booking = await BookingModel.findOne({
+      _id: id,
+      delete_status: false,
+      ...(visibilityFilter || {}),
+    }).select('pnr itinerary_html');
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    const user = getUser(req);
+    const isAdmin = Boolean(user.isAdmin || user.user_role?.trim().toLowerCase() === 'admin');
+    const departments = isAdmin ? [] : await getUserDepartments(req);
     const rows = await AssignmentHistoryModel.find({ booking_id: String(id) })
       .sort({ assign_date: -1 })
       .lean();
+    const visibleRows = isAdmin
+      ? rows
+      : rows.filter(row => departments.includes(String(row.department || '').trim()));
+    const enrichedRows = await enrichAssignmentNames(visibleRows);
 
     return res.status(200).json({
       success: true,
-      count: rows.length,
-      data: rows,
+      count: visibleRows.length,
+      data: enrichedRows,
     });
   } catch (error) {
     console.error('Get assignments error:', error);
     return res.status(500).json({ success: false, message: 'Failed to fetch assignments' });
+  }
+};
+
+export const createBookingAssignment = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { booking_id, department, booking_status, remarks = '', itinerary_html = '' } = req.body;
+    const departmentValue = String(department || '').trim();
+    const status = String(booking_status || '').trim();
+    const user = getUser(req);
+
+    if (!booking_id || !departmentValue || !status) {
+      return res.status(400).json({
+        success: false,
+        message: 'Booking, department and booking status are required',
+      });
+    }
+
+    const visibilityFilter = await getBookingVisibilityFilter(req);
+    const booking = await BookingModel.findOne({
+      _id: booking_id,
+      delete_status: false,
+      ...(visibilityFilter || {}),
+    }).select('pnr itinerary_html');
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    const departmentConditions: Record<string, unknown>[] = [
+      { role_name: departmentValue },
+      { department_role: departmentValue },
+    ];
+    const numericDepartment = Number(departmentValue);
+    if (Number.isInteger(numericDepartment)) departmentConditions.push({ role_id: numericDepartment });
+    if (/^[a-fA-F0-9]{24}$/.test(departmentValue)) departmentConditions.push({ _id: departmentValue });
+
+    const departmentRole = await Role.findOne({
+      $or: departmentConditions,
+      status: 'Enabled',
+      delete_status: { $ne: 'True' },
+    }).select('_id role_id role_name department_role').lean();
+
+    if (!departmentRole) {
+      return res.status(400).json({ success: false, message: 'Invalid department' });
+    }
+
+    const departmentName = departmentRole.role_name || departmentRole.department_role;
+
+    const assignment = await AssignmentHistoryModel.create({
+      booking_id: String(booking._id),
+      pnr: booking.pnr,
+      assign_by: String(user.user_id),
+      assign_by_login: user.user_login,
+      assign_by_name: getUserDisplayName(user),
+      department_id: String(departmentRole._id),
+      department: departmentName,
+      assign_to: '',
+      assign_to_login: '',
+      assign_to_name: '',
+      booking_status: status,
+      remarks: String(remarks).trim(),
+      handled: false,
+      itinerary_html: String(itinerary_html || booking.itinerary_html || ''),
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Booking assigned successfully',
+      data: assignment,
+    });
+  } catch (error) {
+    console.error('Create booking assignment error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to create assignment' });
+  }
+};
+
+export const listBookingAssignments = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = Math.max(1, Math.min(100, Number(req.query.limit) || 10));
+    const visibilityFilter = await getBookingVisibilityFilter(req);
+    const bookingFilter = {
+      delete_status: false,
+      ...(visibilityFilter || {}),
+    };
+    const visibleBookingIds = await BookingModel.find(bookingFilter).distinct('_id');
+    const user = getUser(req);
+    const isAdmin = Boolean(user.isAdmin || user.user_role?.trim().toLowerCase() === 'admin');
+    const departments = isAdmin ? [] : await getUserDepartments(req);
+    const assignmentFilter: Record<string, any> = {
+      booking_id: { $in: visibleBookingIds.map(String) },
+    };
+    if (!isAdmin) {
+      assignmentFilter.department = { $in: departments };
+    }
+
+    const [rows, total] = await Promise.all([
+      AssignmentHistoryModel.find(assignmentFilter)
+        .sort({ assign_date: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+      AssignmentHistoryModel.countDocuments(assignmentFilter),
+    ]);
+
+    const bookings = await BookingModel.find({
+      _id: { $in: rows.map(row => row.booking_id) },
+    }).select('pnr itinerary_html').lean();
+    const bookingById = new Map(bookings.map(booking => [String(booking._id), booking]));
+
+    return res.status(200).json({
+      success: true,
+      count: rows.length,
+      total,
+      page,
+      limit,
+      data: (await enrichAssignmentNames(rows)).map(row => ({
+        ...row,
+        booking: bookingById.get(String(row.booking_id)) || null,
+      })),
+    });
+  } catch (error) {
+    console.error('List booking assignments error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to fetch assignments' });
+  }
+};
+
+export const handleBookingAssignment = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const user = getUser(req);
+    const assignment = await AssignmentHistoryModel.findById(req.params.assignmentId);
+
+    if (!assignment) {
+      return res.status(404).json({ success: false, message: 'Assignment not found' });
+    }
+
+    const visibilityFilter = await getBookingVisibilityFilter(req);
+    const booking = await BookingModel.findOne({
+      _id: assignment.booking_id,
+      delete_status: false,
+      ...(visibilityFilter || {}),
+    });
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    if (req.body.booking_status !== undefined) {
+      assignment.booking_status = String(req.body.booking_status).trim();
+    }
+    if (req.body.remarks !== undefined) {
+      assignment.remarks = String(req.body.remarks).trim();
+    }
+    assignment.handled = req.body.handled === undefined ? true : Boolean(req.body.handled);
+    assignment.done_by = String(user.user_id);
+    assignment.done_by_login = user.user_login;
+    assignment.done_by_name = getUserDisplayName(user);
+    assignment.handled_at = assignment.handled ? new Date() : null;
+    await assignment.save();
+
+    return res.status(200).json({
+      success: true,
+      message: assignment.handled ? 'Assignment marked as handled' : 'Assignment reopened',
+      data: assignment,
+    });
+  } catch (error) {
+    console.error('Handle booking assignment error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to update assignment' });
   }
 };
 

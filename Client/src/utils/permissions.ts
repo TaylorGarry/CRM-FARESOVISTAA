@@ -36,7 +36,8 @@ export const hasRoutePermission = (allowedPaths: Set<string>, path: string) => {
     hasBookingAccess &&
     (
       normalizedPath.startsWith('/bookings/view/') ||
-      normalizedPath.startsWith('/bookings/edit/')
+      normalizedPath.startsWith('/bookings/edit/') ||
+      normalizedPath.startsWith('/bookings/assign/')
     )
   ) {
     return true;
