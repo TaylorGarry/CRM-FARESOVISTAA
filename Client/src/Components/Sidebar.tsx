@@ -328,6 +328,7 @@ const menuItems: MenuItem[] = [
     subItems: [
       { title: 'All Bookings', path: '/bookings/all' },
       { title: 'Add Booking', path: '/bookings/new' },
+      { title: 'Assignments', path: '/bookings/assignments' },
       { title: 'Pending Holds', path: '/bookings/holds' },
     ],
   },

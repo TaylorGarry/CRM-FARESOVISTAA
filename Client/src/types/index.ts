@@ -18,7 +18,7 @@ export interface User {
   add_by?: string;
 }
 
-export interface Role { role_id: number; role_name: string; department_role: string; status: 'Enabled' | 'Disabled'; delete_status: 'False' | 'True'; created_at?: string; add_by?: string; }
+export interface Role { _id?: string; role_id: number; role_name: string; department_role: string; status: 'Enabled' | 'Disabled'; delete_status: 'False' | 'True'; created_at?: string; add_by?: string; }
 export interface Module { id: number; name: string; status: 'Enabled' | 'Disabled'; }
 export interface Submodule { sub_id: number; sub_mainid: number; sub_name: string; sub_page: string; sub_status: 'Enabled' | 'Disabled'; }
 

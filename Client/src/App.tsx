@@ -117,6 +117,8 @@ import { SaleTypes } from './Components/MangeMasters/SaleTypes.tsx';
 import BookingForm from './Components/Bookings/BookingForm.tsx';
 import BookingsList from './Components/Bookings/BookingList.tsx';
 import BookingDetail from "./Components/Bookings/BookingDetail.tsx";
+import AssignmentForm from './Components/Bookings/AssignmentForm.tsx';
+import AssignmentsList from './Components/Bookings/AssignmentsList.tsx';
 import { AssignBookingStatusPage } from './Components/MangeMasters/AssignBookingStatus.tsx';
 import BreakType from './Components/Break/BreakType.tsx';
 
@@ -178,6 +180,8 @@ const App: React.FC = () => {
                         <Route path="/bookings/new" element={<PermissionRoute><BookingForm /></PermissionRoute>} />
                         <Route path="/bookings/edit/:id" element={<PermissionRoute><BookingForm /></PermissionRoute>} />
                         <Route path="/bookings/view/:id" element={<PermissionRoute><BookingDetail /></PermissionRoute>} />
+                        <Route path="/bookings/assign/:id" element={<PermissionRoute><AssignmentForm /></PermissionRoute>} />
+                        <Route path="/bookings/assignments" element={<PermissionRoute><AssignmentsList /></PermissionRoute>} />
 
                         <Route path="/break-tracker/activity-type" element={<BreakType />} />
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />

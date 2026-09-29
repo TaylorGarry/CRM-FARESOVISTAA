@@ -23,6 +23,7 @@
 
 
 import { Router } from 'express';
+import { authMiddleware } from '../../middleware/auth.middleware';
 import {
   // existing
   createBooking,
@@ -41,6 +42,9 @@ import {
   // history
   getBookingHistory,
   getBookingAssignments,
+  createBookingAssignment,
+  listBookingAssignments,
+  handleBookingAssignment,
 
   // per-tab PATCH
   updateSearchInfo,
@@ -58,6 +62,11 @@ const router = Router();
 /* ------------------------------------------------------------------ */
 
 router.get('/my-lock', getMyLock);
+
+/* Assignment APIs are authenticated and append-only for new assignments. */
+router.post('/assignments', authMiddleware, createBookingAssignment);
+router.get('/assignments', authMiddleware, listBookingAssignments);
+router.patch('/assignments/:assignmentId/handle', authMiddleware, handleBookingAssignment);
 
 /* ------------------------------------------------------------------ */
 /* List + create                                                       */
@@ -104,7 +113,7 @@ router.post('/:id/force-unlock', forceUnlock);
 /* ------------------------------------------------------------------ */
 
 router.get('/:id/history', getBookingHistory);
-router.get('/:id/assignments', getBookingAssignments);
+router.get('/:id/assignments', authMiddleware, getBookingAssignments);
 
 /* ------------------------------------------------------------------ */
 /* Per-tab partial updates                                             */

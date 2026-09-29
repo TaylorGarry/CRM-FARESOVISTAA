@@ -132,6 +132,11 @@ const accessMenu: MenuItem[] = [
       sub_name: 'Pending Holds',
       sub_page: '/bookings/holds',
     },
+    {
+      sub_id: 22,
+      sub_name: 'Assignments',
+      sub_page: '/bookings/assignments',
+    },
   ],
 },
    {

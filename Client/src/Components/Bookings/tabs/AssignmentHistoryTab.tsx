@@ -28,6 +28,12 @@ const AssignmentHistoryTab: React.FC<Props> = ({ assignments }) => {
                 Assign To
               </th>
               <th className="px-3 py-2 font-semibold text-[12px] uppercase tracking-wide">
+                Booking Status
+              </th>
+              <th className="px-3 py-2 font-semibold text-[12px] uppercase tracking-wide">
+                Done By
+              </th>
+              <th className="px-3 py-2 font-semibold text-[12px] uppercase tracking-wide">
                 Remarks
               </th>
               <th className="px-3 py-2 font-semibold text-[12px] uppercase tracking-wide">
@@ -39,7 +45,7 @@ const AssignmentHistoryTab: React.FC<Props> = ({ assignments }) => {
             {!assignments.length && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={7}
                   className="px-3 py-6 text-center text-slate-400 text-[13px]"
                 >
                   No assignments yet.
@@ -57,6 +63,12 @@ const AssignmentHistoryTab: React.FC<Props> = ({ assignments }) => {
                 </td>
                 <td className="px-3 py-2 text-slate-600 text-[13px]">
                   {row.assign_to_name || row.assign_to_login || '-'}
+                </td>
+                <td className="px-3 py-2 text-slate-600 text-[13px]">
+                  {row.booking_status || '-'}
+                </td>
+                <td className="px-3 py-2 text-slate-600 text-[13px]">
+                  {row.done_by_name || row.done_by_login || 'N/A'}
                 </td>
                 <td className="px-3 py-2 text-slate-700 text-[13px]">
                   {row.remarks || '-'}
