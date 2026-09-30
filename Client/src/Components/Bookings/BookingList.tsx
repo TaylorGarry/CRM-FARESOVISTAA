@@ -289,6 +289,15 @@ const BookingsList: React.FC = () => {
       ),
     },
     {
+      key: 'cca_status',
+      label: 'CCA Status',
+      render: (v: string) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${v === 'DONE' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : v === 'SENT' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-50 text-slate-500 border-slate-200'}`}>
+          {v || 'NOT SENT'}
+        </span>
+      ),
+    },
+    {
       key: 'total_amount',
       label: 'Total',
       render: (v: number) => (
@@ -354,6 +363,7 @@ const BookingsList: React.FC = () => {
       {/* CCA */}
       <button
         type="button"
+        onClick={() => navigate(`/bookings/${record._id}/cca`)}
         className="px-1.5 py-0.5 text-[11px] font-semibold rounded text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition"
         title="CCA"
       >
@@ -422,7 +432,7 @@ const BookingsList: React.FC = () => {
 );
 
   return (
-    <div className="p-6">
+    <div className="px-2 py-6">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <h1 className="text-2xl font-bold text-slate-800">
           All Bookings

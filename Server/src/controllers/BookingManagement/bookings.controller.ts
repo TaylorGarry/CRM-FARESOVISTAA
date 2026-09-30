@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import BookingModel, { IBooking } from '../../models/Bookings/bookings.model';
 import BookingHistoryModel from "../../models/Bookings/bookingHistory.model"
 import AssignmentHistoryModel from "../../models/Bookings/assignmentHistory.model"
+import CcaModel from '../../models/Bookings/cca.model';
 import { Role } from '../../models/Auth/Role.model';
 import { User } from '../../models/Auth/User.model';
 import { verifyToken } from '../../services/token.service';
@@ -379,6 +380,10 @@ export const getBookings = async (
     })
       .sort({ assign_date: -1 })
       .lean();
+    const ccaRows = await CcaModel.find({
+      booking_id: { $in: records.map(record => String(record._id)) },
+    }).select('booking_id status').lean();
+    const ccaStatusByBooking = new Map(ccaRows.map((cca) => [String(cca.booking_id), cca.status]));
     const enrichedAssignments = await enrichAssignmentNames(assignmentRows);
     const latestAssignmentByBooking = new Map<string, any>();
     for (const assignment of enrichedAssignments) {
@@ -392,6 +397,7 @@ export const getBookings = async (
         ...record.toObject(),
         assign_by: assignment?.assign_by_name || 'N/A',
         assign_to: assignment?.assign_to_name || 'N/A',
+        cca_status: ccaStatusByBooking.get(String(record._id)) || 'NOT SENT',
       };
     });
 
@@ -433,7 +439,8 @@ export const getBookingById = async (
       return res.status(404).json({ success: false, message: 'Booking not found' });
     }
 
-    return res.status(200).json({ success: true, data: booking });
+    const cca = await CcaModel.findOne({ booking_id: String(booking._id) }).select('status').lean();
+    return res.status(200).json({ success: true, data: { ...booking.toObject(), cca_status: cca?.status || 'NOT SENT' } });
   } catch (error) {
     console.error('Get booking error:', error);
     return res.status(500).json({ success: false, message: 'Failed to fetch booking' });

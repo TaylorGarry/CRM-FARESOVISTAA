@@ -4,23 +4,34 @@ interface EmailOptions {
   to: string;
   subject: string;
   html: string;
+  cc?: string;
 }
 
-// PHP SMTP configuration from forgot_password.php
 export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
   try {
+    const host = process.env.SMTP_HOST;
+    const port = Number(process.env.SMTP_PORT || 587);
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+
+    if (!host || !user || !pass) {
+      throw new Error('SMTP_HOST, SMTP_USER and SMTP_PASS are required');
+    }
+
     const transporter = nodemailer.createTransport({
-      host: 'mail.visastation.in',
-      port: 25,
+      host,
+      port,
+      secure: port === 465,
       auth: {
-        user: 'info@visastation.in',
-        pass: 'Computer@123',
+        user,
+        pass,
       },
     });
 
     await transporter.sendMail({
-      from: '"Software Xprts" <info@visastation.in>',
+      from: user,
       to: options.to,
+      cc: options.cc,
       subject: options.subject,
       html: options.html,
     });

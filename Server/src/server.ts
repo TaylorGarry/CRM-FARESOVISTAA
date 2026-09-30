@@ -13,6 +13,7 @@ import bookingRoutes from "./routes/bookingRoutes/booking.routes";
 import masterRoutes from "./routes/ManageMaster/master.routes";
 import uploadRoutes from "./routes/bookingRoutes/upload.routes";
 import breakTypeRoutes from "./routes/BreakRoutes/break.routes";
+import ccaRoutes from "./routes/cca.routes";
 // dotenv.config();
 
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/ip-restrictions', ipRestrictionRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/break-types', breakTypeRoutes);
+app.use('/api/cca', ccaRoutes);
 app.use("/api", userRoutes);
 
 const PORT = process.env.PORT || 5000;
