@@ -119,6 +119,7 @@ import BookingsList from './Components/Bookings/BookingList.tsx';
 import BookingDetail from "./Components/Bookings/BookingDetail.tsx";
 import AssignmentForm from './Components/Bookings/AssignmentForm.tsx';
 import AssignmentsList from './Components/Bookings/AssignmentsList.tsx';
+import CcaPage from './Components/Bookings/CcaPage.tsx';
 import { AssignBookingStatusPage } from './Components/MangeMasters/AssignBookingStatus.tsx';
 import BreakType from './Components/Break/BreakType.tsx';
 
@@ -182,6 +183,7 @@ const App: React.FC = () => {
                         <Route path="/bookings/view/:id" element={<PermissionRoute><BookingDetail /></PermissionRoute>} />
                         <Route path="/bookings/assign/:id" element={<PermissionRoute><AssignmentForm /></PermissionRoute>} />
                         <Route path="/bookings/assignments" element={<PermissionRoute><AssignmentsList /></PermissionRoute>} />
+                        <Route path="/bookings/:id/cca" element={<PermissionRoute><CcaPage /></PermissionRoute>} />
 
                         <Route path="/break-tracker/activity-type" element={<BreakType />} />
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -191,6 +193,7 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route path="/cca/:token" element={<CcaPage publicMode />} />
             </Routes>
           </LockGuardProvider>
         </BookingLockProvider>

@@ -19,6 +19,7 @@ import PaymentInfoTab from "./tabs/PaymentInfoTab";
 import AddRemarksTab from "./tabs/AddRemarksTab";
 import StatusHistoryTab from "./tabs/StatusHistoryTab";
 import AssignmentHistoryTab from"./tabs/AssignmentHistoryTab";
+import CcaSummaryTab from "./tabs/CcaSummaryTab";
 
 /* ------------------------------------------------------------------ */
 /* Tab definitions                                                     */
@@ -33,7 +34,8 @@ type TabKey =
   | 'payment-info'
   | 'add-remarks'
   | 'status-history'
-  | 'assignment-history';
+  | 'assignment-history'
+  | 'cca';
 
 interface TabDef {
   key: TabKey;
@@ -50,6 +52,7 @@ const TABS: TabDef[] = [
   { key: 'add-remarks',         label: 'ADD REMARKS' },
   { key: 'status-history',      label: 'REMARKS & STATUS HISTORY' },
   { key: 'assignment-history',  label: 'ASSIGNMENT HISTORY' },
+  { key: 'cca',                label: 'CCA' },
 ];
 
 const displayLockHolder = (value?: string) => {
@@ -252,6 +255,13 @@ const BookingDetail: React.FC = () => {
         </div>
       )}
 
+      <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-6 py-3">
+        <span className="text-sm font-medium text-slate-700">Credit Card Authorization</span>
+        <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium ${booking.cca_status === 'DONE' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : booking.cca_status === 'SENT' ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-slate-200 bg-slate-50 text-slate-500'}`}>
+          {booking.cca_status || 'NOT SENT'}
+        </span>
+      </div>
+
       {/* ---------- Tab bar ---------- */}
       <div className="bg-white border-b border-slate-200">
         <div className="flex items-stretch overflow-x-auto overflow-y-hidden">
@@ -354,6 +364,8 @@ const BookingDetail: React.FC = () => {
         {activeTab === 'assignment-history' && (
           <AssignmentHistoryTab assignments={assignments} />
         )}
+
+        {activeTab === 'cca' && id && <CcaSummaryTab bookingId={id} />}
       </div>
     </div>
   );

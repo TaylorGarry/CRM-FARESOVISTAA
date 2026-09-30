@@ -63,6 +63,7 @@ export interface BookingRecord {
   net_mco?: number;
 
   booking_status: string;
+  cca_status?: 'DRAFT' | 'SENT' | 'DONE' | 'NOT SENT';
   remarks?: string;
 
   // lock fields
@@ -142,6 +143,24 @@ export interface BookingAssignmentRecord {
   created_at: string;
   updated_at: string;
   booking?: Pick<BookingRecord, '_id' | 'pnr' | 'itinerary_html'> | null;
+}
+
+export interface CcaContent {
+  billing: string;
+  supporting: string;
+  terms: string[];
+  travelerTerms: string;
+  farePolicy: string;
+  paymentPolicy: string[];
+  creditDeclines: string;
+  cancellations: string;
+  finalText: string;
+}
+
+export interface CcaData {
+  booking: Pick<BookingRecord, '_id' | 'pnr' | 'airline_pnr' | 'customer_name' | 'email' | 'billing_phone' | 'card_type' | 'card_holder_name' | 'card_expiry_month' | 'card_expiry_year' | 'pax' | 'trip_type' | 'from' | 'destination' | 'departure_date' | 'return_date' | 'itinerary_html' | 'total_amount' | 'currency' | 'billing_address'> & { card_last4?: string; customer_email?: string };
+  cca: { _id?: string; status: 'DRAFT' | 'SENT' | 'DONE'; customer_email?: string; passenger_names?: string[]; airline_pnr?: string; card_type?: string; cardholder_name?: string; card_last4?: string; expiration_month?: string; expiration_year?: string; contact_no?: string; billing_address?: string; remarks?: string; signature_data?: string; supporting_documents?: { name: string; url: string }[]; };
+  content: CcaContent;
 }
 
 export interface MyLockResponse {
@@ -323,4 +342,9 @@ uploadItineraryImage: (files: File[]) => {
 },
 deleteItineraryImage: (publicId: string) =>
   api.post('/bookings/itinerary/delete-image', { public_id: publicId }),
+
+  getCca: (id: string) => api.get<{ success: boolean; data: CcaData }>(`/cca/booking/${id}`),
+  sendCca: (id: string, data?: Partial<CcaData['cca']>) => api.post<{ success: boolean; message: string; data: CcaData }>(`/cca/booking/${id}/send`, data),
+  getPublicCca: (token: string) => api.get<{ success: boolean; data: CcaData }>(`/cca/public/${token}`),
+  submitPublicCca: (token: string, formData: FormData) => api.post<{ success: boolean; message: string }>(`/cca/public/${token}/submit`, formData),
 };
