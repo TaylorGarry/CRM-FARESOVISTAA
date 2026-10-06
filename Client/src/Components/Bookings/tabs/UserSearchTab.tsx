@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { bookingApi, type BookingRecord } from '../../../services/bookingApi';
+import { saleTypeApi } from '../../../services/masterApi';
+import { type SaleType } from '../../../types/master';
 import DateInput from '../../../utils/DateInput';
-import { TRIP_TYPES, REASONS_OF_SALE } from '../../../constants/bookingConstants';
+import { TRIP_TYPES } from '../../../constants/bookingConstants';
 
 interface Props {
   booking: BookingRecord;
@@ -19,7 +21,25 @@ const UserSearchTab: React.FC<Props> = ({ booking, readOnly, onSaved }) => {
   const [departureDate, setDepartureDate] = useState(booking.departure_date || '');
   const [returnDate, setReturnDate] = useState(booking.return_date || '');
   const [reasonOfSale, setReasonOfSale] = useState(booking.reason_of_sale || '');
+  const [saleTypes, setSaleTypes] = useState<SaleType[]>([]);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const fetchSaleTypes = async () => {
+      try {
+        const res = await saleTypeApi.getAll();
+        if (active && res.data.success) {
+          setSaleTypes(res.data.data.filter((saleType) => saleType.seal_status === 'Enabled' && saleType.seal_type.trim()));
+        }
+      } catch {
+        if (active) toast.error('Failed to load sale types');
+      }
+    };
+
+    fetchSaleTypes();
+    return () => { active = false; };
+  }, []);
 
   const handleSave = async () => {
     if (!from.trim() || !destination.trim()) {
@@ -169,9 +189,12 @@ const UserSearchTab: React.FC<Props> = ({ booking, readOnly, onSaved }) => {
             className={inputCls}
           >
             <option value="">Select reason</option>
-            {REASONS_OF_SALE.map((r) => (
-              <option key={r} value={r}>
-                {r}
+            {reasonOfSale && !saleTypes.some((saleType) => saleType.seal_type === reasonOfSale) && (
+              <option value={reasonOfSale}>{reasonOfSale}</option>
+            )}
+            {saleTypes.map((saleType) => (
+              <option key={saleType._id} value={saleType.seal_type}>
+                {saleType.seal_type}
               </option>
             ))}
           </select>

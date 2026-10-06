@@ -29,7 +29,10 @@ export const sourceApi = {
 };
 
 export const cardTypeApi = {
-  getAll: () => api.get<MasterApiResponse<CardType[]>>('/master/card-types'),
+  getAll: () => api.get<MasterApiResponse<CardType[]>>('/master/card-types', {
+    params: { _ts: Date.now() },
+    headers: { 'Cache-Control': 'no-cache' },
+  }),
   create: (data: Partial<CardType>) => api.post<MasterApiResponse<CardType>>('/master/card-types', data),
   update: (id: string, data: Partial<CardType>) => api.put<MasterApiResponse<CardType>>(`/master/card-types/${id}`, data),
   delete: (id: string) => api.delete<MasterApiResponse>(`/master/card-types/${id}`),
@@ -45,7 +48,10 @@ export const emailTemplateApi = {
 };
 
 export const saleTypeApi = {
-  getAll: () => api.get<MasterApiResponse<SaleType[]>>('/master/sale-types'),
+  getAll: () => api.get<MasterApiResponse<SaleType[]>>('/master/sale-types', {
+    params: { _ts: Date.now() },
+    headers: { 'Cache-Control': 'no-cache' },
+  }),
   create: (data: Partial<SaleType>) => api.post<MasterApiResponse<SaleType>>('/master/sale-types', data),
   update: (id: string, data: Partial<SaleType>) => api.put<MasterApiResponse<SaleType>>(`/master/sale-types/${id}`, data),
   delete: (id: string) => api.delete<MasterApiResponse>(`/master/sale-types/${id}`),
@@ -53,7 +59,10 @@ export const saleTypeApi = {
 };
 
 export const assignBookingStatusApi = {
-  getAll: () => api.get<MasterApiResponse<AssignBookingStatus[]>>('/master/assign-booking-statuses'),
+  getAll: () => api.get<MasterApiResponse<AssignBookingStatus[]>>('/master/assign-booking-statuses', {
+    params: { _ts: Date.now() },
+    headers: { 'Cache-Control': 'no-cache' },
+  }),
   create: (data: Partial<AssignBookingStatus>) => api.post<MasterApiResponse<AssignBookingStatus>>('/master/assign-booking-statuses', data),
   update: (id: string, data: Partial<AssignBookingStatus>) => api.put<MasterApiResponse<AssignBookingStatus>>(`/master/assign-booking-statuses/${id}`, data),
   delete: (id: string) => api.delete<MasterApiResponse>(`/master/assign-booking-statuses/${id}`),

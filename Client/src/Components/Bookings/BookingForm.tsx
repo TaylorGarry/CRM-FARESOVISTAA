@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { bookingApi, type BookingPax, type BookingPayload } from '../../services/bookingApi';
+import { cardTypeApi, saleTypeApi } from '../../services/masterApi';
+import { type CardType, type SaleType } from '../../types/master';
 import RichTextEditor from "./RichTextEditor";
 import {
   PAX_TYPES,
   GENDERS,
   TRIP_TYPES,
   CURRENCIES,
-  CARD_TYPES,
   EXPIRY_MONTHS,
   EXPIRY_YEARS,
-  REASONS_OF_SALE,
   BOOKING_STATUSES,
 } from '../../constants/bookingConstants';
 import { handleFormKeyDown } from '../../utils/handleFormKeyDown';
@@ -74,8 +74,44 @@ const BookingForm: React.FC = () => {
   const isEdit = Boolean(id);
 
   const [form, setForm] = useState<FormState>(initialForm);
+  const [saleTypes, setSaleTypes] = useState<SaleType[]>([]);
+  const [cardTypes, setCardTypes] = useState<CardType[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const fetchSaleTypes = async () => {
+      try {
+        const res = await saleTypeApi.getAll();
+        if (active && res.data.success) {
+          setSaleTypes(res.data.data.filter((saleType) => saleType.seal_status === 'Enabled' && saleType.seal_type.trim()));
+        }
+      } catch {
+        if (active) toast.error('Failed to load sale types');
+      }
+    };
+
+    fetchSaleTypes();
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const fetchCardTypes = async () => {
+      try {
+        const res = await cardTypeApi.getAll();
+        if (active && res.data.success) {
+          setCardTypes(res.data.data.filter((cardType) => cardType.card_type_status === 'Enabled' && cardType.card_type_name.trim()));
+        }
+      } catch {
+        if (active) toast.error('Failed to load card types');
+      }
+    };
+
+    fetchCardTypes();
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     if (!isEdit || !id) return;
@@ -229,8 +265,8 @@ const BookingForm: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-1">
+      <div className="flex items-center justify-between mb-3">
         <h1 className="text-2xl font-bold text-slate-800">
           {isEdit ? 'Edit Booking' : 'Add Booking'}
         </h1>
@@ -456,8 +492,11 @@ const BookingForm: React.FC = () => {
                 onChange={(e) => update('reason_of_sale', e.target.value)}
               >
                 <option value="">Select reason of sale</option>
-                {REASONS_OF_SALE.map((r) => (
-                  <option key={r} value={r}>{r}</option>
+                {form.reason_of_sale && !saleTypes.some((saleType) => saleType.seal_type === form.reason_of_sale) && (
+                  <option value={form.reason_of_sale}>{form.reason_of_sale}</option>
+                )}
+                {saleTypes.map((saleType) => (
+                  <option key={saleType._id} value={saleType.seal_type}>{saleType.seal_type}</option>
                 ))}
               </select>
             </div>
@@ -600,8 +639,11 @@ const BookingForm: React.FC = () => {
                 onChange={(e) => update('card_type', e.target.value)}
               >
                 <option value="">Select Card</option>
-                {CARD_TYPES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                {form.card_type && !cardTypes.some((cardType) => cardType.card_type_name === form.card_type) && (
+                  <option value={form.card_type}>{form.card_type}</option>
+                )}
+                {cardTypes.map((cardType) => (
+                  <option key={cardType._id} value={cardType.card_type_name}>{cardType.card_type_name}</option>
                 ))}
               </select>
             </div>

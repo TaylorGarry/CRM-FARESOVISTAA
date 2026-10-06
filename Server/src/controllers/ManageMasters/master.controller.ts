@@ -10,7 +10,7 @@ import { Role } from "../../models/Auth/Role.model";
 
 const getUserId = (req: Request): string => {
   const anyReq = req as any;
-  return anyReq.user?.userId || anyReq.user?.id || anyReq.user?._id || '0';
+  return String(anyReq.user?.user_id ?? anyReq.user?.userId ?? anyReq.user?.id ?? anyReq.user?._id ?? '0');
 };
 
 const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -638,8 +638,7 @@ export const createAssignBookingStatus = async (req: Request, res: Response) => 
     });
 
     const populated = await AssignBookingStatus.findById(data._id)
-      .populate('role_id', 'role_name role_id')
-      .populate('add_by', 'user_name name email');
+      .populate('role_id', 'role_name role_id');
 
     res.json({ success: true, message: 'Add Successfully !!', data: populated });
   } catch (e: any) {
@@ -695,8 +694,7 @@ export const updateAssignBookingStatus = async (req: Request, res: Response) => 
       },
       { new: true }
     )
-      .populate('role_id', 'role_name role_id')
-      .populate('add_by', 'user_name name email');
+      .populate('role_id', 'role_name role_id');
 
     if (!data) return res.status(404).json({ success: false, message: 'Record not found' });
     res.json({ success: true, message: 'Update Successfully !!', data });

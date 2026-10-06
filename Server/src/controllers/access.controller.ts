@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { isValidObjectId } from 'mongoose';
 import { AuthRequest } from '../types';
 import { Role } from '../models/Auth/Role.model';
 import { RolePermission } from '../models/Auth/RolePermission.model';
@@ -100,4 +101,26 @@ export const savePermission = async (req: AuthRequest, res: Response) => {
     const permission = existing ? await RolePermission.findByIdAndUpdate(existing._id, data, { new: true }) : await RolePermission.create({ roleper_roleid, ...data });
     res.status(existing ? 200 : 201).json({ success: true, message: 'Permissions saved successfully', data: permission });
   } catch { res.status(500).json({ success: false, message: 'Failed to save permissions' }); }
+};
+
+export const togglePermissionStatus = async (req: AuthRequest, res: Response) => {
+  try {
+    const { status } = req.body;
+    if (!['Enabled', 'Disabled'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid permission status' });
+    }
+    if (!isValidObjectId(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'Invalid permission id' });
+    }
+
+    const permission = await RolePermission.findOneAndUpdate(
+      { _id: req.params.id, delete_status: 'False' },
+      { roleper_status: status, update_by: actor(req) },
+      { new: true, runValidators: true }
+    );
+    if (!permission) return res.status(404).json({ success: false, message: 'Role permission not found' });
+    return res.json({ success: true, message: 'Role permission status updated', data: permission });
+  } catch {
+    return res.status(500).json({ success: false, message: 'Failed to update permission status' });
+  }
 };

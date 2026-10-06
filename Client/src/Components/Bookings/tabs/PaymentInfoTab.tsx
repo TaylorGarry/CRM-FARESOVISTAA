@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { bookingApi, type BookingRecord } from '../../../services/bookingApi';
+import { cardTypeApi } from '../../../services/masterApi';
+import { type CardType } from '../../../types/master';
 import MaskedInput from '../../../utils/MaskedInput';
-import {
-  CARD_TYPES,
-  EXPIRY_MONTHS,
-  EXPIRY_YEARS,
-} from '../../../constants/bookingConstants';
+import { EXPIRY_MONTHS, EXPIRY_YEARS } from '../../../constants/bookingConstants';
 
 interface Props {
   booking: BookingRecord;
@@ -151,7 +149,25 @@ const PaymentInfoTab: React.FC<Props> = ({ booking, readOnly, onSaved }) => {
     card_expiry_year: '',
     card_expiry_month: '',
   });
+  const [cardTypes, setCardTypes] = useState<CardType[]>([]);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const fetchCardTypes = async () => {
+      try {
+        const res = await cardTypeApi.getAll();
+        if (active && res.data.success) {
+          setCardTypes(res.data.data.filter((cardType) => cardType.card_type_status === 'Enabled' && cardType.card_type_name.trim()));
+        }
+      } catch {
+        if (active) toast.error('Failed to load card types');
+      }
+    };
+
+    fetchCardTypes();
+    return () => { active = false; };
+  }, []);
 
   // Per-field visibility state — all start hidden (masked)
   const [visible, setVisible] = useState<Record<FieldKey, boolean>>({
@@ -298,8 +314,8 @@ const PaymentInfoTab: React.FC<Props> = ({ booking, readOnly, onSaved }) => {
                 className={inputCls}
               >
                 <option value="">Select Card</option>
-                {CARD_TYPES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                {cardTypes.map((cardType) => (
+                  <option key={cardType._id} value={cardType.card_type_name}>{cardType.card_type_name}</option>
                 ))}
               </select>
             </div>

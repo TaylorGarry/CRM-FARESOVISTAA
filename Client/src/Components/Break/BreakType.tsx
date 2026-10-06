@@ -12,6 +12,7 @@ const BreakType: React.FC = () => {
   const [breakTypeName, setBreakTypeName] = useState('');
   const [status, setStatus] = useState<'Enabled' | 'Disabled'>('Enabled');
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
 
   /* ---------- list state ---------- */
@@ -86,6 +87,14 @@ const BreakType: React.FC = () => {
     setBreakTypeName('');
     setStatus('Enabled');
     setEditingId(null);
+    setShowForm(false);
+  };
+
+  const handleAddNew = () => {
+    setBreakTypeName('');
+    setStatus('Enabled');
+    setEditingId(null);
+    setShowForm(true);
   };
 
   /* ---------- edit ---------- */
@@ -93,7 +102,7 @@ const BreakType: React.FC = () => {
     setEditingId(row._id);
     setBreakTypeName(row.break_type_name);
     setStatus(row.status);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setShowForm(true);
   };
 
   /* ---------- delete ---------- */
@@ -142,64 +151,107 @@ const BreakType: React.FC = () => {
       {/* Page header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-slate-800">Break Type</h1>
+        <button
+          type="button"
+          onClick={handleAddNew}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-200 bg-[#0084D1] text-white hover:bg-[#0073b8] shadow-sm hover:shadow-md cursor-pointer"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Add New Break Type
+        </button>
       </div>
 
-      {/* ---------- Form card ---------- */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
-        <h2 className="text-base font-semibold text-slate-800 mb-5">
-          {editingId ? 'Edit Break Type' : 'Add New Break Type'}
-        </h2>
-
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelCls}>
-                Type of Break <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={breakTypeName}
-                onChange={(e) => setBreakTypeName(e.target.value)}
-                placeholder="Enter Type of Break Name"
-                className={inputCls}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelCls}>Status</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as 'Enabled' | 'Disabled')}
-                className={inputCls}
-              >
-                <option value="Enabled">Enabled</option>
-                <option value="Disabled">Disabled</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="mt-6 flex items-center gap-3">
-            <button
-              type="submit"
-              disabled={saving}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-600 text-white text-sm font-semibold rounded-md hover:bg-sky-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {saving ? 'Saving...' : editingId ? 'Update' : 'Submit'}
-            </button>
-
-            {editingId && (
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50/80">
+              <div>
+                <h2 className="text-xl font-bold text-gray-800">
+                  {editingId ? 'Edit Break Type' : 'Add New Break Type'}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {editingId ? 'Update break type details' : 'Create a new break type'}
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-5 py-2.5 bg-slate-100 text-slate-700 text-sm font-medium rounded-md hover:bg-slate-200 transition"
+                disabled={saving}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                aria-label="Close form"
               >
-                Cancel
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
-            )}
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 space-y-5">
+              <div>
+                <label className={labelCls}>
+                  Type of Break <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={breakTypeName}
+                  onChange={(e) => setBreakTypeName(e.target.value)}
+                  placeholder="Enter Type of Break Name"
+                  className={inputCls}
+                  required
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className={labelCls}>Status</label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as 'Enabled' | 'Disabled')}
+                  className={inputCls}
+                >
+                  <option value="Enabled">Enabled</option>
+                  <option value="Disabled">Disabled</option>
+                </select>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0084D1] text-white rounded-lg text-sm font-medium hover:bg-[#0073b8] transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm cursor-pointer"
+                >
+                  {saving ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {editingId ? 'Update Break Type' : 'Create Break Type'}
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  disabled={saving}
+                  className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition cursor-pointer disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
+        </div>
+      )}
 
       {/* ---------- Table card ---------- */}
       <div className="bg-white rounded-lg border border-slate-200">
@@ -345,6 +397,15 @@ const BreakType: React.FC = () => {
           </div>
         </div>
       </div>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+      `}</style>
     </div>
   );
 };

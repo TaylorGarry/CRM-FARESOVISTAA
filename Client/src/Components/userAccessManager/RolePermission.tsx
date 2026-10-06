@@ -111,7 +111,8 @@ const RolePermission: React.FC = () => {
       const permissionData = await apiService.listPermissions();
       setRolePermissions(permissionData.map((permission: any) => ({
         ...permission,
-        roleper_id: String(permission.roleper_id),
+        // RolePermission uses Mongo's _id; older API responses may expose roleper_id.
+        roleper_id: String(permission.roleper_id ?? permission._id),
         roleper_roleid: String(permission.roleper_roleid),
         roleper_mainmenu: permission.roleper_mainmenu || [],
         roleper_submenu: permission.roleper_submenu || [],
@@ -272,7 +273,7 @@ const RolePermission: React.FC = () => {
     const newStatus = currentStatus === 'Enabled' ? 'Disabled' : 'Enabled';
     try {
       setLoading(true);
-      await axios.patch(`${API_URL}/${rolePermId}/status`, { status: newStatus });
+      await apiService.setPermissionStatus(rolePermId, newStatus);
       setMessage({ text: 'Status updated successfully!', type: 'success' });
       fetchRolePermissions();
       setTimeout(() => setMessage(null), 3000);
@@ -350,17 +351,11 @@ const RolePermission: React.FC = () => {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
-        <div className="text-sm text-gray-600 mb-4">
-          <span className="font-semibold">USER ACCESS MANAGER</span>
-          <span className="mx-2">&gt;</span>
-          <span className="text-[#0084D1]">ROLE & PERMISSION</span>
-        </div>
-
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="mb-4 flex items-center justify-between gap-4 text-sm font-bold text-gray-600">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Role & Permission</h1>
-            <p className="text-sm text-gray-500 mt-1">Manage role permissions and access controls</p>
+            <span className="font-bold">USER ACCESS MANAGER</span>
+            <span className="mx-2 text-lg">&gt;</span>
+            <span className="text-[#0084D1]">ROLE & PERMISSION</span>
           </div>
           <button
             onClick={() => {
@@ -387,8 +382,6 @@ const RolePermission: React.FC = () => {
             Add New Permission
           </button>
         </div>
-
-        {/* Message Toast */}
         {message && (
           <div className={`fixed left-1/2 top-20 z-60 w-[min(92vw,48rem)] -translate-x-1/2 rounded-lg p-3 shadow-lg flex items-center justify-between ${
             message.type === 'success' 
@@ -414,10 +407,7 @@ const RolePermission: React.FC = () => {
             </button>
           </div>
         )}
-
-        {/* Permissions Table */}
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-          {/* Table Header with Search */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3 border-b border-gray-200">
             <div>
               <h3 className="text-sm font-semibold text-gray-700">Permissions List</h3>
@@ -439,7 +429,6 @@ const RolePermission: React.FC = () => {
               </svg>
             </div>
           </div>
-
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
@@ -577,8 +566,6 @@ const RolePermission: React.FC = () => {
               </tbody>
             </table>
           </div>
-
-          {/* Pagination */}
           {filteredPermissions.length > 0 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-gray-200 bg-gray-50/50">
               <div className="text-xs text-gray-600">
@@ -647,8 +634,6 @@ const RolePermission: React.FC = () => {
             </div>
           )}
         </div>
-
-        {/* Action Modal */}
         <ActionModal
           open={Boolean(modal)}
           title={modal?.title || ''}
@@ -657,12 +642,9 @@ const RolePermission: React.FC = () => {
           onConfirm={modal?.success ? () => setModal(null) : confirmDelete}
           onCancel={() => { setModal(null); setDeleteId(null); }}
         />
-
-        {/* Create/Edit Permission Popup Modal */}
         {showForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] overflow-hidden">
-              {/* Modal Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50/80">
                 <div>
                   <h2 className="text-xl font-bold text-gray-800">
@@ -681,11 +663,8 @@ const RolePermission: React.FC = () => {
                   </svg>
                 </button>
               </div>
-
-              {/* Modal Body */}
               <div className="overflow-y-auto p-6" style={{ maxHeight: 'calc(95vh - 140px)' }}>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Role Name */}
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Role Name <span className="text-red-500">*</span>
@@ -719,7 +698,6 @@ const RolePermission: React.FC = () => {
                   </div>
 
                   <div className="flex flex-col md:flex-row gap-6">
-                    {/* Dashboard Permission */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
                         <label className="text-xs font-medium text-gray-700">Dashboard Permission</label>
@@ -739,8 +717,6 @@ const RolePermission: React.FC = () => {
                         </span>
                       </div>
                     </div>
-
-                    {/* MCO Report */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
                         <label className="text-xs font-medium text-gray-700">Use this Role for MCO Report</label>
@@ -761,8 +737,6 @@ const RolePermission: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Menu Permissions */}
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-2">Menu Permissions</label>
                     <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
@@ -820,8 +794,6 @@ const RolePermission: React.FC = () => {
                       ))}
                     </div>
                   </div>
-
-                  {/* Status */}
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
                     <div className="relative">
@@ -846,8 +818,6 @@ const RolePermission: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Form Actions */}
                   <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-200">
                     <button
                       type="submit"
@@ -885,8 +855,6 @@ const RolePermission: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Add animation styles */}
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: scale(0.95); }

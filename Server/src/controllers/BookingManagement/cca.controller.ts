@@ -54,6 +54,11 @@ const signedDocumentUrl = (document: { url: string; public_id?: string; resource
 };
 const finalText = 'Thanks for spending your valuable time and using Consolidator Desk. For using the website, you are authorized to agree with the aforementioned ‘Terms of Use’. If you are reluctant or don’t agree with any of the conditions.';
 
+const isAdminRequest = (req: Request) => {
+  const user = (req as any).user;
+  return Boolean(user?.isAdmin || user?.user_role?.trim().toLowerCase() === 'admin');
+};
+
 const safeBooking = (booking: any) => ({
   _id: booking._id,
   pnr: booking.pnr,
@@ -79,7 +84,7 @@ const safeBooking = (booking: any) => ({
   billing_address: booking.billing_address || booking.address,
 });
 
-const responseData = (booking: any, cca: any, includePrivate = false) => ({
+const responseData = (booking: any, cca: any, includePrivate = false, includeSupportingDocuments = includePrivate) => ({
   booking: safeBooking(booking),
   cca: {
     _id: cca?._id,
@@ -96,7 +101,9 @@ const responseData = (booking: any, cca: any, includePrivate = false) => ({
     billing_address: cca?.billing_address || booking.billing_address || booking.address || '',
     remarks: cca?.remarks || '',
     signature_data: includePrivate ? cca?.signature_data || '' : undefined,
-    supporting_documents: (cca?.supporting_documents || []).map((document: any) => ({ ...document, url: signedDocumentUrl(document) })),
+    supporting_documents: includeSupportingDocuments
+      ? (cca?.supporting_documents || []).map((document: any) => ({ ...document, url: signedDocumentUrl(document) }))
+      : [],
     sent_at: cca?.sent_at,
     completed_at: cca?.completed_at,
   },
@@ -108,7 +115,8 @@ export const getCca = async (req: Request, res: Response) => {
     const booking = await BookingModel.findById(req.params.id).lean();
     if (!booking) return res.status(404).json({ success: false, message: 'Booking not found' });
     const cca = await CcaModel.findOne({ booking_id: String(booking._id) }).lean();
-    return res.json({ success: true, data: responseData(booking, cca, true) });
+    const isAdmin = isAdminRequest(req);
+    return res.json({ success: true, data: responseData(booking, cca, isAdmin, isAdmin) });
   } catch { return res.status(500).json({ success: false, message: 'Failed to load CCA' }); }
 };
 
@@ -145,7 +153,8 @@ export const sendCca = async (req: Request, res: Response) => {
     const link = `${baseUrl}/cca/${token}`;
     const sent = await sendEmail({ to: recipientEmail, subject: 'Credit Card Authorization Form', html: `<p>Please complete your Credit Card Authorization Form for booking <strong>${booking.pnr}</strong>.</p><p><a href="${link}">Complete the Credit Card Authorization Form</a></p>` });
     if (!sent) return res.status(502).json({ success: false, message: 'CCA was created but the email could not be sent' });
-    return res.json({ success: true, message: 'CCA link sent', data: responseData(booking, cca, true) });
+    const isAdmin = isAdminRequest(req);
+    return res.json({ success: true, message: 'CCA link sent', data: responseData(booking, cca, isAdmin, isAdmin) });
   } catch { return res.status(500).json({ success: false, message: 'Failed to send CCA' }); }
 };
 
