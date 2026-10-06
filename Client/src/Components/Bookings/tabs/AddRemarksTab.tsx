@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { bookingApi, type BookingRecord } from '../../../services/bookingApi';
-import { BOOKING_STATUSES } from '../../../constants/bookingConstants';
+import { assignBookingStatusApi } from '../../../services/masterApi';
+import { type AssignBookingStatus } from '../../../types/master';
 
 interface Props {
   booking: BookingRecord;
@@ -19,8 +20,28 @@ const AddRemarksTab: React.FC<Props> = ({
   const [bookingStatus, setBookingStatus] = useState<string>(
     booking.booking_status || 'New Booking'
   );
+  const [bookingStatuses, setBookingStatuses] = useState<AssignBookingStatus[]>([]);
   const [remarks, setRemarks] = useState<string>('');
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (readOnly) return;
+
+    let active = true;
+    const fetchBookingStatuses = async () => {
+      try {
+        const res = await assignBookingStatusApi.getAll();
+        if (active && res.data.success) {
+          setBookingStatuses(res.data.data.filter((status) => status.status === 'Enabled' && status.bookingstatusname.trim()));
+        }
+      } catch {
+        if (active) toast.error('Failed to load booking statuses');
+      }
+    };
+
+    fetchBookingStatuses();
+    return () => { active = false; };
+  }, [readOnly]);
 
   const handleSave = async () => {
     if (!remarks.trim()) {
@@ -105,9 +126,12 @@ const AddRemarksTab: React.FC<Props> = ({
             onChange={(e) => setBookingStatus(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
           >
-            {BOOKING_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s}
+            {bookingStatus && !bookingStatuses.some((status) => status.bookingstatusname === bookingStatus) && (
+              <option value={bookingStatus}>{bookingStatus}</option>
+            )}
+            {bookingStatuses.map((status) => (
+              <option key={status._id} value={status.bookingstatusname}>
+                {status.bookingstatusname}
               </option>
             ))}
           </select>

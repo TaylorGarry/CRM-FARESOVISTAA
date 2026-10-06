@@ -439,8 +439,36 @@ export const getBookingById = async (
       return res.status(404).json({ success: false, message: 'Booking not found' });
     }
 
-    const cca = await CcaModel.findOne({ booking_id: String(booking._id) }).select('status').lean();
-    return res.status(200).json({ success: true, data: { ...booking.toObject(), cca_status: cca?.status || 'NOT SENT' } });
+    const [cca, latestAssignment] = await Promise.all([
+      CcaModel.findOne({ booking_id: String(booking._id) }).select('status').lean(),
+      AssignmentHistoryModel.findOne({ booking_id: String(booking._id) })
+        .sort({ assign_date: -1, _id: -1 })
+        .select('itinerary_html assign_date')
+        .lean(),
+    ]);
+
+    const bookingData = booking.toObject();
+    const assignmentDate = latestAssignment?.assign_date
+      ? new Date(latestAssignment.assign_date).getTime()
+      : 0;
+    const bookingUpdatedAt = bookingData.updatedAt
+      ? new Date(bookingData.updatedAt).getTime()
+      : 0;
+
+    // Older assignments may already contain uploaded images even though the
+    // booking record was not updated at that time. Use that latest assignment
+    // content until the booking itinerary has a newer explicit update.
+    if (
+      latestAssignment?.itinerary_html &&
+      (!bookingData.itinerary_html || assignmentDate > bookingUpdatedAt)
+    ) {
+      bookingData.itinerary_html = latestAssignment.itinerary_html;
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: { ...bookingData, cca_status: cca?.status || 'NOT SENT' },
+    });
   } catch (error) {
     console.error('Get booking error:', error);
     return res.status(500).json({ success: false, message: 'Failed to fetch booking' });
@@ -920,6 +948,21 @@ export const createBookingAssignment = async (
     }
 
     const departmentName = departmentRole.role_name || departmentRole.department_role;
+    const assignmentItineraryHtml = String(itinerary_html || booking.itinerary_html || '');
+
+    // The assignment editor can add or update itinerary images. Keep the main
+    // booking itinerary in sync so the image is also visible from Booking
+    // Detail, which reads itinerary_html from the booking record.
+    await BookingModel.updateOne(
+      { _id: booking._id },
+      {
+        $set: {
+          itinerary_html: assignmentItineraryHtml,
+          update_by: getUserDisplayName(user),
+          update_date: new Date(),
+        },
+      }
+    );
 
     const assignment = await AssignmentHistoryModel.create({
       booking_id: String(booking._id),
@@ -935,7 +978,7 @@ export const createBookingAssignment = async (
       booking_status: status,
       remarks: String(remarks).trim(),
       handled: false,
-      itinerary_html: String(itinerary_html || booking.itinerary_html || ''),
+      itinerary_html: assignmentItineraryHtml,
     });
 
     return res.status(201).json({

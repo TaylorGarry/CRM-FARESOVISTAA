@@ -210,6 +210,7 @@ const IpRestriction: React.FC = () => {
           status={v as 'Enabled' | 'Disabled'}
           onToggle={() => handleToggleStatus(r, v)}
           showToggle
+          toggleStyle="pill"
         />
       ),
     },

@@ -1,208 +1,48 @@
 @import "tailwindcss";
 
-html,
-body,
-#root {
-  min-height: 100%;
-}
-
-body {
-  margin: 0;
-  background: #f7f9fc;
-  color: #172b4d;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-/* Shared visual tokens matching the light CRM reference. Existing screens use
-   utility classes, so these overrides keep the theme consistent app-wide. */
-[class*="bg-[#0b0f14]"],
-[class*="bg-[#0d131a]"],
-[class*="bg-[#121820]"],
-[class*="bg-[#18212b]"],
-.bg-slate-900 {
-  background-color: #ffffff !important;
-}
-
-[class*="f4f0e7"],
-[class*="e6cc93"] {
-  color: #172b4d !important;
-}
-
-[class*="8c96a2"],
-[class*="66717d"],
-[class*="65707b"] {
-  color: #6b7c93 !important;
-}
-
-[class*="border-white/10"],
-[class*="border-[rgba(231,226,211,0.15)]"] {
-  border-color: #e2e8f0 !important;
-}
-
-[class*="bg-[#d6b36a]"] {
-  background-color: #0b72e7 !important;
-}
-
-[class*="bg-[#d6b36a]/15"] {
-  background-color: rgb(11 114 231 / 0.08) !important;
-}
-
-[class*="hover:bg-[#e6cc93]"]:hover {
-  background-color: #075fca !important;
-}
-
-[class*="text-[#d6b36a]"],
-[class*="text-[#e6cc93]"] {
-  color: #0b72e7 !important;
-}
-
-.login-submit-button {
-  color: #ffffff !important;
-}
-
-[class*="border-[#d6b36a]"] {
-  border-color: #0b72e7 !important;
-}
-
-[class*="ring-[#d6b36a]"] {
-  --tw-ring-color: rgb(11 114 231 / 0.2) !important;
-}
-
-input, select, textarea {
-  border-color: #d8e0eb;
-  background: #ffffff;
-  color: #172b4d;
-}
-
-input::placeholder, textarea::placeholder {
-  color: #8a9ab0;
-}
-
-button, a {
-  cursor: pointer;
-  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-}
-
-button:disabled {
-  cursor: not-allowed;
-}
-
-.flight-grid {
-  opacity: 0.75;
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-}
-
-.flight-grid::before {
-  content: "";
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 25% 45%, rgb(214 179 106 / 0.1), transparent 30%),
-    linear-gradient(120deg, transparent 54%, rgb(255 255 255 / 0.025));
-  position: absolute;
-  inset: 0;
-}
-
-.flight-grid__latitude,
-.flight-grid__longitude {
-  border: 1px solid rgb(214 179 106 / 0.1);
-  border-radius: 50%;
-  position: absolute;
-  transform: rotate(-20deg);
-}
-
-.flight-grid__latitude {
-  height: 28%;
-  left: -20%;
-  width: 105%;
-}
-
-.flight-grid__latitude--one {
-  top: 27%;
-}
-
-.flight-grid__latitude--two {
-  height: 37%;
-  top: 44%;
-}
-
-.flight-grid__longitude {
-  height: 125%;
-  top: -15%;
-  width: 48%;
-}
-
-.flight-grid__longitude--one {
-  left: 16%;
-}
-
-.flight-grid__longitude--two {
-  left: 42%;
-}
-
-.flight-grid__route {
-  background: linear-gradient(90deg, transparent, rgb(214 179 106 / 0.55), transparent);
-  height: 1px;
-  position: absolute;
-  transform-origin: 0;
-}
-
-.flight-grid__route--one {
-  left: 22%;
-  top: 42%;
-  transform: rotate(-24deg);
-  width: 62%;
-}
-
-.flight-grid__route--two {
-  left: 36%;
-  top: 65%;
-  transform: rotate(17deg);
-  width: 50%;
-}
-
-.flight-grid__node {
-  background: #0b0f14;
-  border: 1px solid #d6b36a;
-  border-radius: 50%;
-  box-shadow: 0 0 0 5px rgb(214 179 106 / 0.08);
-  height: 5px;
-  position: absolute;
-  width: 5px;
-}
-
-.flight-grid__node--one {
-  left: 22%;
-  top: 42%;
-}
-
-.flight-grid__node--two {
-  left: 84%;
-  top: 16%;
-}
-
-.flight-grid__node--three {
-  left: 67%;
-  top: 59%;
-}
-
-.flight-grid__coordinates {
-  bottom: 15%;
-  color: rgb(214 179 106 / 0.38);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  line-height: 1.7;
-  position: absolute;
-  right: 9%;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+:root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #18345f; background: #f7f8fc; font-synthesis: none; }
+html, body, #root { min-height: 100%; }
+body { margin: 0; background: #f7f8fc; color: #18345f; font-size: 14px; }
+button, input, select, textarea { font: inherit; }
+button, a { cursor: pointer; transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease; }
+button:disabled { cursor: not-allowed; }
+input, select, textarea { border-color: #d6deea; background: #fff; color: #18345f; }
+input::placeholder, textarea::placeholder { color: #98a4b5; }
+input:focus, select:focus, textarea:focus { border-color: #3478d4; outline: 0; box-shadow: 0 0 0 3px rgb(52 120 212 / 12%); }
+.app-header { border-bottom: 1px solid #e4e8f0; }
+.app-sidebar { border-right: 1px solid #e4e8f0; }
+.sidebar-label { color: #8c98aa; font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.app-nav-item { display: flex; min-height: 40px; align-items: center; gap: 11px; border-radius: 7px; padding: 0 11px; color: #60708a; font-size: 13px; font-weight: 500; text-align: left; }
+.app-nav-item:hover, .app-nav-item.is-open { background: #f5f7fc; color: #18345f; }
+.app-nav-item.active { background: #eef1ff; color: #3478d4; font-weight: 600; }
+.app-subnav { display: block; border-radius: 5px; padding: 8px 10px; color: #60708a; font-size: 12px; font-weight: 500; }
+.app-subnav:hover { background: #f5f7fc; color: #3478d4; }
+.app-subnav.active { background: #e8e8ff; color: #18345f; font-weight: 600; }
+.icon-button { display: grid; height: 34px; width: 34px; place-items: center; border-radius: 6px; color: #60708a; }
+.icon-button:hover { background: #f5f7fc; color: #18345f; }
+.notification-dot { position: absolute; right: 1px; top: 1px; display: grid; height: 15px; min-width: 15px; place-items: center; border-radius: 999px; background: #3478d4; color: white; font-size: 9px; font-weight: 700; }
+.flight-grid { opacity: .75; pointer-events: none; position: absolute; inset: 0; }
+.flight-grid::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgb(52 120 212 / 7%) 1px, transparent 1px), linear-gradient(90deg, rgb(52 120 212 / 7%) 1px, transparent 1px); background-size: 42px 42px; }
+.flight-grid__latitude, .flight-grid__longitude, .flight-grid__route, .flight-grid__node, .flight-grid__coordinates { display: none; }
+/* Legacy screen classes stay in place so their behavior is untouched; these
+   presentation overrides bring them into the shared operations theme. */
+[class*="bg-[#0b0f14]"], [class*="bg-[#121820]"], [class*="bg-[#18212b]"] { background-color: #fff !important; }
+[class*="bg-[#0b0f14]"] { background-color: #f1f1ff !important; }
+[class*="text-[#f4f0e7]"], [class*="text-[#e6cc93]"], [class*="text-[#172b4d]"] { color: #18345f !important; }
+[class*="text-[#8c96a2]"], [class*="text-[#65707b]"], [class*="text-[#66717d]"] { color: #60708a !important; }
+[class*="text-[#d6b36a]"], [class*="text-[#e6cc93]"] { color: #3478d4 !important; }
+[class*="border-[rgba(231,226,211,0.15)]"], [class*="border-white/5"] { border-color: #e4e8f0 !important; }
+[class*="bg-[#d6b36a]"] { background-color: #3478d4 !important; }
+[class*="hover:bg-[#e6cc93]"]:hover { background-color: #2f80ed !important; }
+[class*="ring-[#d6b36a]"] { --tw-ring-color: rgb(52 120 212 / 18%) !important; }
+.login-submit-button { color: #fff !important; background-color: #3478d4 !important; box-shadow: none !important; }
+.login-submit-button:hover { background-color: #2f80ed !important; }
+.app-main main, .app-main section { max-width: 1500px; }
+.app-main table { border-color: #edf0f5; }
+.app-main th { background: #f7f8fc; color: #60708a; }
+.app-main tbody tr:hover { background: #fafbfe; }
+.app-main .rounded-xl, .app-main .rounded-2xl { border-radius: 9px; }
+.app-main .shadow-xl, .app-main .shadow-2xl { box-shadow: 0 12px 30px rgb(24 52 95 / 10%); }
+@media (max-width: 1023px) { .app-sidebar { transform: translateX(-100%); width: 236px !important; } .app-sidebar.sidebar-open { transform: translateX(0); box-shadow: 8px 0 24px rgb(24 52 95 / 10%); } .app-sidebar + .app-main { margin-left: 0 !important; } }
+@media (max-width: 640px) { .app-main { padding-left: 16px; padding-right: 16px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }

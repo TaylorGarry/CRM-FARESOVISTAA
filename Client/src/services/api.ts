@@ -343,6 +343,7 @@ class ApiService {
   async listSubmodules(moduleId?: number): Promise<Submodule[]> { return (await this.api.get('/submodules', { params: moduleId ? { moduleId } : {} })).data.data; }
   async listPermissions() { return (await this.api.get('/role-permissions')).data.data; }
   async savePermission(data: Record<string, unknown>) { return (await this.api.post('/role-permissions', data)).data; }
+  async setPermissionStatus(id: string, status: string) { return (await this.api.patch(`/role-permissions/${id}/status`, { status })).data; }
 
   // ============================================================
   // Generic HTTP helpers (used by masterApi.ts and other modules)

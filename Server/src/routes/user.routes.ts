@@ -10,7 +10,7 @@ import {
 import { authMiddleware } from '../middleware/auth.middleware';
 import { sessionMiddleware } from '../middleware/session.middleware';
 import { activityMiddleware } from '../middleware/activity.middleware';
-import { createRole, listRoles, updateRole, deleteRole, toggleRoleStatus, listModules, listSubmodules, listPermissions, savePermission } from '../controllers/access.controller';
+import { createRole, listRoles, updateRole, deleteRole, toggleRoleStatus, listModules, listSubmodules, listPermissions, savePermission, togglePermissionStatus } from '../controllers/access.controller';
 
 const router = Router();
 
@@ -33,5 +33,6 @@ router.get('/modules', listModules);
 router.get('/submodules', listSubmodules);
 router.get('/role-permissions', listPermissions);
 router.post('/role-permissions', savePermission);
+router.patch('/role-permissions/:id/status', togglePermissionStatus);
 
 export default router;

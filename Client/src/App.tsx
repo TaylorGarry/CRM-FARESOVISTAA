@@ -144,15 +144,14 @@ const App: React.FC = () => {
               path="/*"
               element={
                 <ProtectedRoute>
-                  <div className="min-h-screen bg-slate-50">
+                  <div className="min-h-screen bg-[#f7f8fc]">
                     <Header
                       isSidebarOpen={isSidebarOpen}
                       setIsSidebarOpen={setIsSidebarOpen}
                     />
                     <Sidebar isOpen={isSidebarOpen} />
                     <main
-                      className={`transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'
-                        } min-h-screen px-4 py-6 pt-16 lg:px-8 bg-slate-50`}
+                      className={`app-main transition-all duration-200 ${isSidebarOpen ? 'lg:ml-59' : 'lg:ml-18'} min-h-screen px-4 pb-8 pt-15 sm:px-6 lg:px-8`}
                     >
                       <Routes>
                         <Route path="/dashboard" element={<PermissionRoute><Dashboard /></PermissionRoute>} />

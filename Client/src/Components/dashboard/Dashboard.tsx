@@ -5,7 +5,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
 
   return (
-    <div className="space-y-6 font-[Arial,Helvetica,sans-serif] text-[#f4f0e7]">
+    <div className="space-y-4 font-[Arial,Helvetica,sans-serif] text-[#f4f0e7]">
       {/* Welcome Section */}
       <div className="rounded-xl border border-[rgba(231,226,211,0.15)] bg-[#121820] p-6 shadow-sm mt-5">
         <p className="mb-2 text-[10px] font-bold tracking-[0.23em] text-[#d6b36a]">

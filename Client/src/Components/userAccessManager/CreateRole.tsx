@@ -193,17 +193,11 @@ const CreateRole: React.FC = () => {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
-        <div className="text-sm text-gray-600 mb-4">
-          <span className="font-semibold">USER ACCESS MANAGER</span>
-          <span className="mx-2">&gt;</span>
-          <span className="text-[#0084D1]">CREATE ROLE</span>
-        </div>
-
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="mb-2 flex items-center justify-between gap-4 text-sm font-bold text-gray-600">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Create Role</h1>
-            <p className="text-sm text-gray-500 mt-1">Manage roles and department assignments</p>
+            <span className="font-bold">USER ACCESS MANAGER</span>
+            <span className="mx-2 text-lg">&gt;</span>
+            <span className="text-[#0084D1]">CREATE ROLE</span>
           </div>
           <button
             onClick={() => {
@@ -223,6 +217,15 @@ const CreateRole: React.FC = () => {
             </svg>
             Add New Role
           </button>
+        </div>
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
+          <div>
+            {/* <h1 className="text-2xl font-bold text-gray-800">Create Role</h1> */}
+            {/* <p className="text-sm text-gray-500 mt-1">Manage roles and department assignments</p> */}
+          </div>
+
         </div>
 
         {/* Message Toast */}

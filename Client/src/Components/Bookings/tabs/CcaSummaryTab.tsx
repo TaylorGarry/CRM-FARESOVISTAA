@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { bookingApi, type CcaData } from '../../../services/bookingApi';
+import { useAuth } from '../../../hooks/useAuth';
+import { isAdminUser } from '../../../utils/permissions';
 
 const CcaSummaryTab: React.FC<{ bookingId: string }> = ({ bookingId }) => {
+  const { user } = useAuth();
+  const isAdmin = isAdminUser(user);
   const [data, setData] = useState<CcaData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -50,7 +54,7 @@ const CcaSummaryTab: React.FC<{ bookingId: string }> = ({ bookingId }) => {
         {cca.remarks && <p className="mt-4 text-sm text-slate-600"><span className="font-medium text-slate-800">Remarks:</span> {cca.remarks}</p>}
       </section>
 
-      <section className="bg-white border border-slate-200 rounded-lg p-5">
+      {isAdmin && <section className="bg-white border border-slate-200 rounded-lg p-5">
         <h2 className="text-sm font-semibold text-slate-800">Supporting Documents</h2>
         {cca.supporting_documents && cca.supporting_documents.length > 0 ? (
           <div className="mt-4 space-y-2">
@@ -62,7 +66,7 @@ const CcaSummaryTab: React.FC<{ bookingId: string }> = ({ bookingId }) => {
             ))}
           </div>
         ) : <p className="mt-3 text-sm text-slate-500">No supporting documents uploaded.</p>}
-      </section>
+      </section>}
 
       {cca.signature_data && <section className="bg-white border border-slate-200 rounded-lg p-5"><h2 className="text-sm font-semibold text-slate-800">Customer Signature</h2><img src={cca.signature_data} alt="Customer signature" className="mt-4 max-w-xs border border-slate-200" /></section>}
     </div>

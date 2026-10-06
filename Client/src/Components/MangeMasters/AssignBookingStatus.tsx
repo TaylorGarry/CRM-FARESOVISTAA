@@ -86,6 +86,11 @@ export const AssignBookingStatusPage: React.FC = () => {
         ? await assignBookingStatusApi.update(editingId, formData)
         : await assignBookingStatusApi.create(formData);
       if (res.data.success) {
+        const savedRecord = res.data.data;
+        setData((current) => editingId
+          ? current.map((record) => record._id === editingId ? savedRecord : record)
+          : [savedRecord, ...current]
+        );
         toast.success(editingId ? 'Updated successfully' : 'Created successfully');
         resetForm();
         await fetchData();

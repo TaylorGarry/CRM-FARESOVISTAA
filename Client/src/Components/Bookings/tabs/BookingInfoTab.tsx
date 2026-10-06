@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { bookingApi, type BookingRecord } from '../../../services/bookingApi';
-import { BOOKING_STATUSES, CURRENCIES, REASONS_OF_SALE } from '../../../constants/bookingConstants';
+import { saleTypeApi } from '../../../services/masterApi';
+import { type SaleType } from '../../../types/master';
+import { BOOKING_STATUSES, CURRENCIES } from '../../../constants/bookingConstants';
 
 interface Props {
   booking: BookingRecord;
@@ -27,7 +29,25 @@ const BookingInfoTab: React.FC<Props> = ({ booking, readOnly, onSaved }) => {
     arc: booking.arc || '',
     net_mco: String(booking.net_mco ?? 0),
   });
+  const [saleTypes, setSaleTypes] = useState<SaleType[]>([]);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const fetchSaleTypes = async () => {
+      try {
+        const res = await saleTypeApi.getAll();
+        if (active && res.data.success) {
+          setSaleTypes(res.data.data.filter((saleType) => saleType.seal_status === 'Enabled' && saleType.seal_type.trim()));
+        }
+      } catch {
+        if (active) toast.error('Failed to load sale types');
+      }
+    };
+
+    fetchSaleTypes();
+    return () => { active = false; };
+  }, []);
 
   const update = (key: keyof typeof form, value: string) =>
     setForm((p) => ({ ...p, [key]: value }));
@@ -124,8 +144,11 @@ const BookingInfoTab: React.FC<Props> = ({ booking, readOnly, onSaved }) => {
               className={inputCls}
             >
               <option value="">Select reason</option>
-              {REASONS_OF_SALE.map((r) => (
-                <option key={r} value={r}>{r}</option>
+              {form.reason_of_sale && !saleTypes.some((saleType) => saleType.seal_type === form.reason_of_sale) && (
+                <option value={form.reason_of_sale}>{form.reason_of_sale}</option>
+              )}
+              {saleTypes.map((saleType) => (
+                <option key={saleType._id} value={saleType.seal_type}>{saleType.seal_type}</option>
               ))}
             </select>
           </div>
