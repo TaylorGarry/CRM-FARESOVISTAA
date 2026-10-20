@@ -43,9 +43,6 @@ const BrandLockup = () => (
       className="size-10 rounded-xl object-cover shadow-sm"
     />
     <span className="leading-none">
-      <strong className="block text-sm font-bold tracking-[0.18em] text-[#f4f0e7]">
-        FARESOVISTA
-      </strong>
       <small className="mt-1 block text-[9px] font-semibold tracking-[0.24em] text-[#8c96a2]">
         AIRLINE OPERATIONS CRM
       </small>
@@ -262,7 +259,6 @@ const Login: React.FC = () => {
         </div>
 
         <div className="mt-18 flex flex-wrap items-center justify-center gap-2 text-center text-[7px] uppercase tracking-[0.12em] text-[#65707b] min-[421px]:gap-2.75 min-[421px]:text-[8px] min-[701px]:mt-auto min-[701px]:text-[9px]">
-          <span>SECURE ENTERPRISE WORKSPACE</span>
           <span className="h-px w-7 bg-[rgba(231,226,211,0.15)]" />
           <span>AUTHENTICATION</span>
         </div>
